@@ -1,0 +1,22 @@
+doctype html
+html(lang="de")
+	head
+		- import std.base64;
+		- import std.digest.sha;
+		meta(charset="utf-8")
+		meta(name="viewport", content="width=device-width, initial-scale=1")
+		meta(http-equiv="Content-Security-Policy", content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://api.burgerking.de; font-src 'self' https://fonts.gstatic.com; script-src 'self'")
+		title Würger King - Web Slurger
+		link(rel="manifest", href="/manifest.json")
+		meta(name="application-name", content="Würger King")
+		meta(name="theme-color", content="#fcf6f0")
+
+		link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Kalam:300|Passion+One")
+		link(rel="stylesheet", href="/css/materialdesignicons.min.css")
+		link(rel="stylesheet", href="/css/slurger.css")
+		block head
+	body
+		block content
+		block scripts
+			script(src="/js/api.js")
+			script(src="/js/slurger.js")

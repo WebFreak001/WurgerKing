@@ -1,0 +1,27 @@
+extends base.dt
+
+block content
+	.triple.home
+		header.wonky-bottom.branded
+			img(src="/img/profile.png")
+			.profile Hallo, #{username}!
+		main.grid
+			- import api.cache;
+			- import std.conv;
+			- foreach (row; tiles)
+				.row
+					- foreach (tile; row)
+						- string bg = tile.images.bgColor.length == 6 ? text("background-color:#", tile.images.bgColor) : null;
+						.tile(style=bg, width=tile.dimension.width, height=tile.dimension.height,
+								data-type=tile.type, data-json=tile.data)
+							.content.wonky
+								- if (tile.type == "menuKingfinder")
+									img(src="/img/kingfinder.png")
+								- else foreach (image; [tile.images.bgImage, tile.images.fgImage])
+									- if (!image.isNull)
+										img(src=proxyImage(image.url))
+		footer
+			.info
+			.flag
+	footer.bottombar.hidden
+		.close.mdi.mdi-chevron-left

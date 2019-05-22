@@ -1,0 +1,257 @@
+body, html {
+	margin: 0;
+	padding: 0;
+	font-size: 20px;
+	overflow-x: hidden;
+	min-width: 100%;
+	min-height: 100%;
+	background-color: #fcf6f0;
+}
+
+body {
+	max-width: 720px;
+	margin: auto;
+}
+
+.wonky {
+	/* -webkit-mask-box-image: url(/img/bordermask.svg) 8 round;
+	-webkit-mask-box-image-width: 3%; */
+	mask-border: url(/img/bordermask.svg) 8 round;
+	mask-border-width: 3%;
+	transform: scale(1.015);
+}
+
+.wonky-bottom {
+	/* -webkit-mask-box-image: url(/img/bordermask-bottom.svg) 8 round;
+	-webkit-mask-box-image-width: 0.4rem; */
+	mask-border: url(/img/bordermask-bottom.svg) 8 round;
+	mask-border-width: 0.4rem;
+}
+
+.branded {
+	position: relative;
+	overflow: hidden;
+	z-index: 1;
+}
+
+.branded:before {
+	content: "";
+	display: block;
+	z-index: -1;
+	width: 31vw;
+	height: 31vw;
+	position: absolute;
+	top: -5vw;
+	right: -4vw;
+	background-color: #f4ebe4;
+	-webkit-mask-image: url(/img/bk_logo_bw.svg);
+	mask-image: url(/img/bk_logo_bw.svg);
+}
+
+.home footer, .home header, footer.bottombar {
+	background-color: #fcf6f0;
+	width: 100%;
+	height: 3.2rem;
+	display: flex;
+	font-family: 'Kalam', cursive;
+	font-style: oblique;
+	color: #8e5630;
+	letter-spacing: -2px;
+}
+
+.home header {
+	position: fixed;
+	top: 0;
+	left: 0;
+}
+
+.home header, footer.bottombar {
+	align-items: center;
+	z-index: 100;
+}
+
+.triple.home {
+	margin-top: 3.2rem;
+}
+
+.home > main {
+	min-height: 100vh;
+}
+
+.grid {
+	display: flex;
+	flex-direction: column;
+}
+
+.grid > .row {
+	display: flex;
+	flex-direction: row;
+}
+
+.grid > .row > .tile {
+	flex-shrink: 1;
+	display: block;
+	position: relative;
+}
+
+.grid > .row > .tile:before {
+	content: "";
+	display: block;
+	padding-top: 100%;
+}
+
+.grid > .row > .tile[width="1"] {
+	width: 25%;
+}
+
+.grid > .row > .tile[width="2"] {
+	width: 50%;
+}
+
+.grid > .row > .tile[width="3"] {
+	width: 75%;
+}
+
+.grid > .row > .tile[width="4"] {
+	width: 100%;
+}
+
+.grid > .row > .tile[width="1"][height="1"]:before,
+.grid > .row > .tile[width="2"][height="2"]:before,
+.grid > .row > .tile[width="3"][height="3"]:before,
+.grid > .row > .tile[width="4"][height="4"]:before {
+	padding-top: 100%;
+}
+
+.grid > .row > .tile[width="2"][height="1"]:before,
+.grid > .row > .tile[width="4"][height="2"]:before {
+	padding-top: 50%;
+}
+
+.grid > .row > .tile > .content, .grid > .row > .tile img {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.home footer > * {
+	margin: 1.05rem 0 0.95rem 1.2rem;
+	height: 1.2rem;
+	width: 1.2rem;
+}
+
+.home footer > .info {
+	background: url('/img/info.png') no-repeat center center;
+	background-size: cover;
+}
+
+.home footer > .flag {
+	background: url('/img/flag_de.png') no-repeat center center;
+	background-size: cover;
+}
+
+.home header > img {
+	margin-left: 0.8rem;
+	margin-right: 0.4rem;
+	height: 1.6rem;
+}
+
+.subpage {
+	display: block;
+	width: 100vw;
+	min-height: 100vh;
+	background-color: #fcf6f0;
+}
+
+.subpage.loading {
+	position: fixed;
+	opacity: 0;
+	transition: left 0.3s ease-out,
+		top 0.3s ease-out,
+		width 0.3s ease-out,
+		height 0.3s ease-out,
+		opacity 0.2s ease-out;
+	z-index: 100;
+	overflow: hidden;
+	min-width: 0;
+	min-height: 0;
+}
+
+.subpage.loading.animating {
+	left: 0 !important;
+	top: 0 !important;
+	width: 100vw !important;
+	height: 100vh !important;
+	opacity: 1;
+}
+
+.titled > .title {
+	font-family: 'Passion One', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+	text-transform: uppercase;
+	font-size: 1.75rem;
+	line-height: 1;
+	padding: 0.8em 0.35em 0.7em;
+	color: #682f1c;
+	flex-shrink: 0;
+}
+
+.titled > .title.loading {
+	opacity: 0;
+	transform: translateY(1rem);
+	transition: transform 0.1s ease-out,
+		opacity 0.1s ease-out;
+}
+
+.titled > .title.loading.animating {
+	opacity: 1;
+	transform: translateY(0%);
+}
+
+.titled > .title > img.subtitle {
+	position: absolute;
+	bottom: 0.25em;
+	left: 0.35em;
+	height: 0.82em;
+}
+
+footer.bottombar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	z-index: 200;
+	transition: opacity 0.2s ease-out 0.1s;
+	font-size: 2rem;
+	color: #682f1c;
+	background-color: #ffffff;
+}
+
+footer.bottombar.hidden {
+	pointer-events: none;
+	opacity: 0;
+}
+
+footer.bottombar .mdi {
+	line-height: 3.2rem;
+	width: 2.5rem;
+	text-align: center;
+}
+
+.subpage.titled {
+    min-height: unset;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.subpage.bottomless {
+    height: calc(100vh - 3.2rem);
+}
+
+
+.subpage.titled .content {
+    flex-grow: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
