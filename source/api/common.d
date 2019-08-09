@@ -53,6 +53,37 @@ void cacheImages(Images images)
 enum isTilable(T) = __traits(hasMember, T.init, "dimension")
 	&& is(typeof(__traits(getMember, T.init, "dimension")) : Dimension);
 
+auto compactRows(Tile)(Tile[] tiles)
+		if (isTilable!Tile)
+{
+	int sum = 0;
+	for (size_t i = 0; i < tiles.length; i++)
+	{
+		auto w = tiles[i].dimension.width;
+		if (sum + w <= 4)
+			sum = (sum + w) % 4;
+		else
+		{
+			for (size_t j = i + 1; j < tiles.length; j++)
+			{
+				auto o = tiles[j].dimension.width;
+				if (sum + o <= 4)
+				{
+					sum = (sum + o) % 4;
+					auto save = tiles[j];
+					// move up all elements by 1, then move last element to first
+					for (size_t n = j; n > i; n--)
+						tiles[n] = tiles[n - 1];
+					tiles[i] = save;
+					break;
+				}
+			}
+		}
+	}
+
+	return tiles;
+}
+
 auto byRows(Tiles)(Tiles tiles)
 		if (isInputRange!Tiles && isTilable!(ElementType!Tiles))
 {
@@ -141,4 +172,30 @@ unittest
 	rows.popFront();
 	assert(rows.front.length == 1);
 	assert(rows.front[0].id == 10);
+	rows.popFront();
+	assert(rows.empty);
+
+	// test gap compression (2, 4, 2)
+	tiles = [
+		SimpleTile(Dimension(4, 4), 1),
+		SimpleTile(Dimension(2, 2), 2),
+		SimpleTile(Dimension(4, 4), 3),
+		SimpleTile(Dimension(2, 2), 4),
+		SimpleTile(Dimension(4, 4), 5),
+	];
+	rows = tiles.compactRows.byRows;
+	assert(rows.front.length == 1);
+	assert(rows.front[0].id == 1);
+	rows.popFront();
+	assert(rows.front.length == 2);
+	assert(rows.front[0].id == 2);
+	assert(rows.front[1].id == 4);
+	rows.popFront();
+	assert(rows.front.length == 1);
+	assert(rows.front[0].id == 3);
+	rows.popFront();
+	assert(rows.front.length == 1);
+	assert(rows.front[0].id == 5);
+	rows.popFront();
+	assert(rows.empty);
 }

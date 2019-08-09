@@ -35,6 +35,6 @@ class PublicAPIImpl : PublicAPI
 			if (!ret.images.fgImage.isNull)
 				ret.images.fgImage.url = proxyImage(ret.images.fgImage.url);
 			return ret;
-		}).byRows.array;
+		}).array.compactRows.byRows.array;
 	}
 }
