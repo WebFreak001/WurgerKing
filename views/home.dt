@@ -25,3 +25,4 @@ block content
 			.flag
 	footer.bottombar.hidden
 		.close.mdi.mdi-chevron-left
+		.right

@@ -31,13 +31,41 @@ function clickTile(tile) {
 
 var bottomBar = {
 	element: document.querySelector(".bottombar"),
+	actionsContainer: null,
 	show: function (actions) {
 		this.element.classList.remove("hidden");
+		while (this.actionsContainer.hasChildNodes())
+			this.actionsContainer.removeChild(this.actionsContainer.lastChild);
+
+		if (Array.isArray(actions)) {
+			for (var i = 0; i < actions.length; i++) {
+				var action = actions[i];
+				var elem;
+				if (typeof action.icon == "string" && action.icon.endsWith(".svg")) {
+					elem = document.createElement("img");
+					elem.src = action.icon;
+
+				} else if (typeof action.element == "object") {
+					elem = action.element;
+				} else {
+					console.error("Ignoring unsupported action ", action);
+					continue;
+				}
+
+				var btn = document.createElement("div");
+				btn.className = "action" + (typeof action.icon == "string" ? " icon" : "");
+				btn.appendChild(elem);
+				if (action.callback)
+					btn.addEventListener("click", action.callback);
+				this.actionsContainer.appendChild(btn);
+			}
+		}
 	},
 	hide: function () {
 		this.element.classList.add("hidden");
 	}
 };
+bottomBar.actionsContainer = bottomBar.element.querySelector(".right");
 bottomBar.element.querySelector(".close").addEventListener("click", function () {
 	pages.home(); // for now, just jump to home
 });
@@ -49,7 +77,7 @@ var pages = {
 	 * @param {HTMLElement} tile 
 	 * @param {Function?} animationDone 
 	 */
-	openBlankGeneric: function (tile, withBottomBar, animationDone) {
+	openBlankGeneric: function (tile, withBottomBar, animationDone, actions) {
 		// TODO: push history so we can go back
 		var div = document.createElement("div");
 		div.className = "subpage loading" + (withBottomBar ? " bottomless" : "");
@@ -84,11 +112,11 @@ var pages = {
 		}, 10);
 
 		if (withBottomBar)
-			bottomBar.show();
+			bottomBar.show(actions);
 
 		return div;
 	},
-	openTitledGeneric: function (tile, title, withBottomBar, animationDone, titleAnimationDone) {
+	openTitledGeneric: function (tile, title, withBottomBar, animationDone, titleAnimationDone, actions) {
 		var titleDiv = document.createElement("div");
 		titleDiv.className = "title branded loading";
 		titleDiv.textContent = title;
@@ -102,7 +130,7 @@ var pages = {
 				if (titleAnimationDone) titleAnimationDone();
 			}, 200);
 			if (animationDone) animationDone();
-		});
+		}, actions);
 		div.classList.add("titled");
 		div.appendChild(titleDiv);
 		div.appendChild(content);
@@ -129,7 +157,30 @@ var pages = {
 			img.classList.add("subtitle");
 			img.src = subtitle.src;
 			title.appendChild(img);
-		});
+		}, [
+				{
+					icon: "img/icons/mybk.svg",
+					callback: function (e) {
+					}
+				},
+				{
+					icon: "img/icons/heart.svg",
+					callback: function (e) {
+						this.children[0].src = "img/icons/heart_filled.svg";
+					}
+				},
+				{
+					icon: "img/icons/search.svg",
+					callback: function (e) {
+					}
+				},
+				{
+					icon: "img/icons/filter.svg",
+					callback: function (e) {
+						this.children[0].src = "img/icons/filter_filled.svg";
+					}
+				}
+			]);
 
 		div.classList.add("grid");
 		pages.updateCoupons(div);
@@ -188,6 +239,15 @@ var pages = {
 					}
 
 					td.appendChild(content);
+
+					var like = document.createElement("img");
+					like.className = "like";
+					like.setAttribute("data-id", cell.id);
+					like.src = likes.check(cell.id) ? "img/icons/heart_filled.svg" : "img/icons/heart.svg";
+					like.addEventListener("click", function () {
+						this.src = likes.toggle(this.getAttribute("data-id")) ? "img/icons/heart_filled.svg" : "img/icons/heart.svg";
+					});
+					td.appendChild(like);
 				}
 			}
 		});
@@ -210,6 +270,39 @@ if ('serviceWorker' in navigator) {
 			console.log('Registration failed with ' + error);
 		});
 }
+
+var likes = {
+	data: null,
+	load: function () {
+		var str = window.localStorage.getItem("likes");
+		if (str && str[0] == '{')
+			this.data = JSON.parse(str);
+		else
+			this.data = {};
+	},
+	save: function () {
+		window.localStorage.setItem("likes", JSON.stringify(this.data));
+	},
+	check: function (id) {
+		id = id.toString();
+		if (this.data == null)
+			this.load();
+		return !!this.data[id];
+	},
+	toggle: function (id) {
+		id = id.toString();
+		var val = !this.check(id);
+		this.set(id, val);
+		return val;
+	},
+	set: function (id, liked) {
+		id = id.toString();
+		if (this.data == null)
+			this.load();
+		this.data[id] = liked;
+		this.save();
+	}
+};
 
 window.addEventListener("beforeinstallprompt", function (e) {
 	var banner = document.createElement("div");

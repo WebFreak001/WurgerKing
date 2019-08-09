@@ -136,6 +136,12 @@ body {
 	height: 100%;
 }
 
+.grid > .row > .tile img.like {
+	width: 16px;
+	height: 16px;
+	padding: 16px;
+}
+
 .home footer > * {
 	margin: 1.05rem 0 0.95rem 1.2rem;
 	height: 1.2rem;
@@ -225,6 +231,7 @@ footer.bottombar {
 	font-size: 2rem;
 	color: #682f1c;
 	background-color: #ffffff;
+	display: flex;
 }
 
 footer.bottombar.hidden {
@@ -238,20 +245,50 @@ footer.bottombar .mdi {
 	text-align: center;
 }
 
+footer.bottombar .mdi:before {
+	vertical-align: bottom;
+}
+
+footer.bottombar .right {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}
+
+footer.bottombar .right .action {
+	width: 56px;
+	height: 64px;
+	display: block;
+	transition: background-color ease-in 100ms;
+}
+
+footer.bottombar .right .action:hover,
+footer.bottombar .right .action:active {
+	background-color: #fae5d0;
+}
+
+footer.bottombar .right .action.icon img {
+	width: 24px;
+	height: 24px;
+	margin: 20px 16px;
+	display: block;
+}
+
 .subpage.titled {
-    min-height: unset;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+	min-height: unset;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
 }
 
 .subpage.bottomless {
-    height: calc(100vh - 3.2rem);
+	height: calc(100vh - 3.2rem);
 }
 
 
 .subpage.titled .content {
-    flex-grow: 1;
-    overflow-x: hidden;
-    overflow-y: auto;
+	flex-grow: 1;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
