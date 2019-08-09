@@ -5,6 +5,8 @@ import api.public_.impl;
 import api.v3.tiles;
 import api.v4.coupons;
 
+import std.typecons;
+
 void main()
 {
 	auto settings = new HTTPServerSettings;
@@ -13,6 +15,7 @@ void main()
 
 	auto db = connectMongoDB("mongodb://127.0.0.1").getDatabase("wurgerking");
 	Coupon.collection = db["coupons"];
+	Coupon.collection.ensureIndex([tuple("id", 1)], IndexFlags.unique);
 
 	auto router = new URLRouter;
 

@@ -49,13 +49,13 @@ void updateCoupons()
 	auto coupons = getBKCoupons();
 	auto ids = coupons.map!(a => a["id"].get!int).array;
 	Coupon.collection.update(["id": ["$nin": ids]],
-			["$set": ["_active": Json(false), "_order": Json(1000)]]);
+			["$set": ["_active": Json(false), "_order": Json(1000)]], UpdateFlags.multiUpdate);
 	foreach (i, coupon; coupons)
 	{
 		coupon["_order"] = Json(cast(int) i);
 		coupon["_apiVer"] = Json(couponApiVersion);
 		coupon["_active"] = Json(true);
-		Coupon.collection.update(["id": coupon["id"].get!int], coupon, UpdateFlags.upsert);
+		Coupon.collection.update(["id": cast(long) coupon["id"].get!int], coupon, UpdateFlags.upsert);
 	}
 }
 
