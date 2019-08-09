@@ -67,19 +67,20 @@ var bottomBar = {
 };
 bottomBar.actionsContainer = bottomBar.element.querySelector(".right");
 bottomBar.element.querySelector(".close").addEventListener("click", function () {
-	pages.home(); // for now, just jump to home
+	pages.back();
 });
 
 var pages = {
 	animation: undefined,
 	cancelAnimation: undefined,
+	stack: [],
 	/**
 	 * @param {HTMLElement} tile 
 	 * @param {Function?} animationDone 
 	 */
 	openBlankGeneric: function (tile, withBottomBar, animationDone, actions) {
-		// TODO: push history so we can go back
 		var div = document.createElement("div");
+		this.stack.push({ div: div, withBottomBar: withBottomBar, actions: actions });
 		div.className = "subpage loading" + (withBottomBar ? " bottomless" : "");
 		var rect = tile.getBoundingClientRect();
 		div.style.left = rect.x + "px";
@@ -103,7 +104,7 @@ var pages = {
 				var subPages = document.querySelectorAll(".subpage");
 				for (var i = 0; i < subPages.length; i++)
 					if (subPages[i] != div)
-						subPages[i].parentElement.removeChild(subPages[i]);
+						subPages[i].style.display = "none";
 				document.querySelector(".home").style.display = "none";
 
 				pages.cancelAnimation = undefined;
@@ -135,6 +136,26 @@ var pages = {
 		div.appendChild(titleDiv);
 		div.appendChild(content);
 		return content;
+	},
+	back: function () {
+		clearTimeout(pages.animation);
+		if (pages.cancelAnimation) pages.cancelAnimation();
+		var page = this.stack.pop();
+		if (page) {
+			document.body.removeChild(page.div);
+		}
+
+		if (this.stack.length == 0) {
+			this.home();
+		} else {
+			var current = this.stack[this.stack.length - 1];
+			var subPages = document.querySelectorAll(".subpage");
+			for (var i = 0; i < subPages.length; i++)
+				subPages[i].style.display = subPages[i] == current.div ? "" : "none";
+
+			if (current.withBottomBar)
+				bottomBar.show(current.actions);
+		}
 	},
 	home: function () {
 		clearTimeout(pages.animation);
@@ -200,13 +221,35 @@ var pages = {
 	openGeneric: function (tile) {
 
 	},
+	onClickCoupon: function (event) {
+		var data = JSON.parse(this.parentElement.getAttribute("data"));
+		console.log(data);
+		pages.openBlankGeneric(this.parentElement, true, function () {
+
+		}, [
+				{
+					icon: "img/icons/share.svg",
+					callback: function () {
+						if (navigator.share) {
+							navigator.share({
+								text: "Gutscheine statt Geldscheine.\n" + data.title + " für " + data.price,
+								url: "burgerking://coupons/" + data.id
+							})
+						}
+					}
+				}
+			])
+	},
 	/**
 	 * @param {HTMLElement} div
 	 */
 	updateCoupons: function (div, filterCategories, onlyActive) {
 		while (div.hasChildNodes())
 			div.removeChild(div.lastChild);
+		var couponClickHandler = this.onClickCoupon;
+		var self = this;
 		api.getCoupons(filterCategories, onlyActive).then(function (rows) {
+			self.currentRows = rows;
 			for (var i = 0; i < rows.length; i++) {
 				var row = rows[i];
 				var tr = document.createElement("div");
@@ -239,6 +282,7 @@ var pages = {
 					}
 
 					td.appendChild(content);
+					content.addEventListener("click", couponClickHandler);
 
 					var like = document.createElement("img");
 					like.className = "like";
