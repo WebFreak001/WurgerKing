@@ -166,7 +166,7 @@ var pages = {
 					var td = document.createElement("div");
 					td.className = "tile";
 					if (cell.images.bgColor.length == 6)
-						td.style.backgroundColor = cell.images.bgColor;
+						td.style.backgroundColor = "#" + cell.images.bgColor;
 					td.setAttribute("width", cell.dimension.width);
 					td.setAttribute("height", cell.dimension.height);
 					td.setAttribute("data", JSON.stringify(cell));

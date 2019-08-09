@@ -12,18 +12,22 @@ import vibe.core.log;
 
 class PublicAPIImpl : PublicAPI
 {
-	Coupon[][] getCoupons(int[] filterCategories = null, bool onlyActive = true, int limit = 100) @safe
+	Coupon[][] getCoupons(int[] filterCategories = null, bool onlyActive = true, int limit = 100, bool allGeo = false) @safe
 	{
 		if (limit < 1)
 			limit = 1;
 		else if (limit > 100)
 			limit = 100;
+
 		Bson[string] query;
 		query["_apiVer"] = Bson(couponApiVersion);
 		if (onlyActive)
 			query["_active"] = Bson(true);
 		if (filterCategories.length)
 			query["categories"] = Bson(["$in": serializeToBson(filterCategories)]);
+		if (!allGeo)
+			query["geo"] = Bson(["$ne": Bson(true)]);
+
 		return Coupon.collection.find(query).sort(["_order": 1]).limit(limit).map!((a) {
 			auto ret = a.deserializeBson!Coupon;
 			if (!ret.images.bgImage.isNull)

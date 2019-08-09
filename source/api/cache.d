@@ -74,6 +74,7 @@ string proxyFile(URL file, Duration lifetime = 3650.days) @safe
 	{
 		try
 		{
+			logInfo("Proxying file %s for %s", file, lifetime);
 			download(file, dst);
 			return dst.toString.stripPublic;
 		}
