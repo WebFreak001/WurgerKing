@@ -671,11 +671,11 @@ var pages = {
 			}
 		});
 	},
-	onClickPromo: function (event) {
-		var data = JSON.parse(this.selectedElement.getAttribute("data-json"));
+	onClickPromo: function (event, pointer, cellElement, cellIndex) {
+		var data = JSON.parse(cellElement.getAttribute("data-json"));
 		var activePromo = data.promoId;
 		var promos = api.getPromos();
-		var div = pages.openBlankGeneric("promos", this.parentElement, true, function () {
+		var div = pages.openBlankGeneric("promos", cellElement, true, function () {
 			promos.then(function (promos) {
 				var carousel = document.createElement("div");
 				carousel.className = "carousel";
