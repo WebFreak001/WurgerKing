@@ -28,7 +28,7 @@ body {
 	mask-border-width: 0.4rem;
 }
 
-.branded {
+.branded, .bigbranded {
 	position: relative;
 	overflow: hidden;
 	z-index: 1;
@@ -43,6 +43,20 @@ body {
 	position: absolute;
 	top: -5vw;
 	right: -4vw;
+	background-color: #f4ebe4;
+	-webkit-mask-image: url(/img/bk_logo_bw.svg);
+	mask-image: url(/img/bk_logo_bw.svg);
+}
+
+.bigbranded:before {
+	content: "";
+	display: block;
+	z-index: -1;
+	width: 54.5vw;
+	height: 55vw;
+	position: absolute;
+	top: -5vw;
+	left: 0;
 	background-color: #f4ebe4;
 	-webkit-mask-image: url(/img/bk_logo_bw.svg);
 	mask-image: url(/img/bk_logo_bw.svg);
@@ -88,13 +102,13 @@ body {
 	flex-direction: row;
 }
 
-.grid > .row > .tile {
+.grid > .row > .tile, .bigtile {
 	flex-shrink: 1;
 	display: block;
 	position: relative;
 }
 
-.grid > .row > .tile:before {
+.grid > .row > .tile:before, .bigtile:before {
 	content: "";
 	display: block;
 	padding-top: 100%;
@@ -128,7 +142,7 @@ body {
 	padding-top: 50%;
 }
 
-.grid > .row > .tile > .content, .grid > .row > .tile img {
+.grid > .row > .tile > .content, .grid > .row > .tile img, .bigtile > .content, .bigtile img, .bigtile .qrcode {
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -136,13 +150,19 @@ body {
 	height: 100%;
 }
 
-.grid > .row > .tile img.like {
+.grid > .row > .tile img.like, .bigtile img.like {
 	width: 16px;
 	height: 16px;
 	padding: 16px;
+	z-index: 3;
 }
 
-.home footer > * {
+.bigtile {
+	width: 100%;
+	flex-grow: 1;
+}
+
+.home footer > *, .qrcode .flag {
 	margin: 1.05rem 0 0.95rem 1.2rem;
 	height: 1.2rem;
 	width: 1.2rem;
@@ -153,7 +173,7 @@ body {
 	background-size: cover;
 }
 
-.home footer > .flag {
+.home footer > .flag, .qrcode .flag {
 	background: url('/img/flag_de.png') no-repeat center center;
 	background-size: cover;
 }
@@ -193,14 +213,23 @@ body {
 	opacity: 1;
 }
 
-.titled > .title {
+.titled > .title, .highlit-panel h3, .highlit-panel h4, .highlit-panel p.price, .redeembtn, .bigtile .qrcode .code {
 	font-family: 'Passion One', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 	text-transform: uppercase;
 	font-size: 1.75rem;
 	line-height: 1;
-	padding: 0.8em 0.35em 0.7em;
 	color: #682f1c;
 	flex-shrink: 0;
+	margin: 0;
+	font-weight: normal;
+}
+
+.highlit-panel p.description, .bigtile .qrcode .toplabel, .bigtile .qrcode .bottomlabel {
+	font-family: 'Overpass', 'Open Sans', Roboto, Arial, sans-serif;
+}
+
+.titled > .title {
+	padding: 0.8em 0.35em 0.7em;
 }
 
 .titled > .title.loading {
@@ -260,7 +289,7 @@ footer.bottombar .right .action {
 	width: 56px;
 	height: 64px;
 	display: block;
-	transition: background-color ease-in 100ms;
+	transition: background-color 100ms ease-in;
 }
 
 footer.bottombar .right .action:hover,
@@ -275,20 +304,102 @@ footer.bottombar .right .action.icon img {
 	display: block;
 }
 
-.subpage.titled {
-	min-height: unset;
+.subpage.titled, .subpage.coupon {
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
 }
 
 .subpage.bottomless {
+	min-height: unset;
 	height: calc(100vh - 3.2rem);
 }
 
 
-.subpage.titled .content {
+.subpage .content {
 	flex-grow: 1;
 	overflow-x: hidden;
 	overflow-y: auto;
+}
+
+.highlit-panel {
+	background-color: #f8e5d2;
+	color: #682f1c;
+	padding: 1em 0.75em;
+}
+
+.highlit-panel h3 {
+	font-size: 1.6rem;
+}
+
+.highlit-panel p.description {
+	margin: 0.5rem 0;
+	font-size: 0.7rem;
+	transform: scaleY(1.1);
+}
+
+.highlit-panel p.price {
+	color: #ad8b7c;
+	font-size: 1.4rem;
+}
+
+.highlit-panel h4 {
+	margin-top: 1.5em;
+	font-size: 1.3rem;
+}
+
+.subpage .fullmaps {
+	width: 100%;
+}
+
+.redeembtn {
+	background-color: #f7a600;
+	color: white;
+	height: 60px;
+	line-height: 60px;
+	font-size: 1.4rem;
+	text-align: center;
+	transition: background-color 100ms ease-in;
+}
+
+.redeembtn:hover {
+	background-color: #feba3a;
+}
+
+.bigtile .qrcode {
+	background-color: #fcf6f0;
+	z-index: 5;
+	transition: opacity 300ms ease-out;
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+}
+
+.bigtile .qrcode .flag {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 32px;
+	height: 32px;
+}
+
+.bigtile .qrcode .code {
+	flex-grow: 1;
+	flex-shrink: 1;
+	color: #ad8b7c;
+}
+
+.bigtile .qrcode .code .label {
+	transform: scaleY(1.1);
+}
+
+.bigtile .qrcode .toplabel, .bigtile .qrcode .bottomlabel {
+	color: #ad8b7c;
+	font-size: 0.7rem;
+	margin: 1.2rem 0;
+}
+
+.bigtile .qrcode .toplabel {
+	margin-top: 2rem;
+	margin-bottom: 0.3rem;
 }

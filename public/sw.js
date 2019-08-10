@@ -1,6 +1,6 @@
 self.addEventListener('install', function (event) {
 	event.waitUntil(
-		caches.open('v1').then(function (cache) {
+		caches.open('v2').then(function (cache) {
 			return cache.addAll([
 				'/',
 				'/manifest.json',
@@ -12,6 +12,7 @@ self.addEventListener('install', function (event) {
 				'/css/materialdesignicons.min.css',
 				'/css/slurger.css',
 				'/js/api.js',
+				'/js/qr.min.js',
 				'/js/slurger.js',
 				'/img/flag_de.png',
 				'/img/info.png',

@@ -11,7 +11,7 @@ html(lang="de")
 		meta(name="application-name", content="Würger King")
 		meta(name="theme-color", content="#fcf6f0")
 
-		link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Kalam:300|Passion+One")
+		link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Kalam:300|Passion+One|Overpass")
 		link(rel="stylesheet", href="/css/materialdesignicons.min.css")
 		link(rel="stylesheet", href="/css/slurger.css")
 		block head
@@ -19,4 +19,5 @@ html(lang="de")
 		block content
 		block scripts
 			script(src="/js/api.js")
+			script(src="/js/qr.min.js")
 			script(src="/js/slurger.js")

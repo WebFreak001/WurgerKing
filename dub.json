@@ -2,5 +2,6 @@
 	"dependencies": {
 		"vibe-d": "~>0.8.3"
 	},
-	"name": "bk-webapp"
+	"name": "bk-webapp",
+	"license": "GPL-3.0"
 }
