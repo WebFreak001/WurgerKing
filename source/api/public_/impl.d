@@ -14,7 +14,7 @@ import vibe.core.log;
 class PublicAPIImpl : PublicAPI
 {
 	Coupon[][] getCoupons(int[] filterCategories = null, bool onlyActive = true,
-			int limit = 100, bool allGeo = false) @safe
+			int limit = 100, bool allGeo = false, int[] filterIds = null) @safe
 	{
 		if (limit < 1)
 			limit = 1;
@@ -29,6 +29,8 @@ class PublicAPIImpl : PublicAPI
 			query["categories"] = Bson(["$in": serializeToBson(filterCategories)]);
 		if (!allGeo)
 			query["geo"] = Bson(["$ne": Bson(true)]);
+		if (filterIds.length)
+			query["id"] = Bson(["$in": serializeToBson(filterIds)]);
 
 		return Coupon.collection.find(query).sort(["_order": 1]).limit(limit).map!((a) {
 			auto ret = a.deserializeBson!Coupon;

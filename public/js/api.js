@@ -1,8 +1,10 @@
 var api = {
-	getCoupons: function (filterCategories, onlyActive, limit, allGeo) {
+	getCoupons: function (filterCategories, onlyActive, limit, allGeo, filterIds) {
 		var url = "/api/coupons?";
 		if (filterCategories !== undefined)
 			url += "filterCategories=" + encodeURIComponent(JSON.stringify(filterCategories)) + "&";
+		if (filterIds !== undefined)
+			url += "filterIds=" + encodeURIComponent(JSON.stringify(filterIds)) + "&";
 		if (onlyActive !== undefined)
 			url += "onlyActive=" + encodeURIComponent(onlyActive ? "true" : "false") + "&";
 		if (limit !== undefined)

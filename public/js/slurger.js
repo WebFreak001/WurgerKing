@@ -200,6 +200,14 @@ var pages = {
 	openCoupons: function (tile) {
 		var subtitle = new Image();
 		subtitle.src = "/img/subtitle_coupons.png";
+
+		var showActive = false;
+		var filterLikes = false;
+
+		function refreshItems() {
+			pages.updateCoupons(div, undefined, !showActive, filterLikes);
+		}
+
 		var div = this.openTitledGeneric("coupontiles", tile, "Deine Coupons", true, undefined, function () {
 			var title = div.parentElement.querySelector(".title");
 			var img = document.createElement("img");
@@ -215,7 +223,9 @@ var pages = {
 				{
 					icon: "/img/icons/heart.svg",
 					callback: function (e) {
-						this.children[0].src = "/img/icons/heart_filled.svg";
+						filterLikes = !filterLikes;
+						this.children[0].src = filterLikes ? "/img/icons/heart_filled.svg" : "/img/icons/heart.svg";
+						refreshItems();
 					}
 				},
 				{
@@ -226,13 +236,16 @@ var pages = {
 				{
 					icon: "/img/icons/filter.svg",
 					callback: function (e) {
-						this.children[0].src = "/img/icons/filter_filled.svg";
+						// TODO: add category filter here
+						showActive = !showActive;
+						this.children[0].src = showActive ? "/img/icons/filter_filled.svg" : "/img/icons/filter.svg";
+						refreshItems();
 					}
 				}
 			]);
 
 		div.classList.add("grid");
-		pages.updateCoupons(div);
+		refreshItems();
 	},
 	openDelivery: function (tile) {
 
@@ -642,12 +655,12 @@ var pages = {
 	/**
 	 * @param {HTMLElement} div
 	 */
-	updateCoupons: function (div, filterCategories, onlyActive) {
+	updateCoupons: function (div, filterCategories, onlyActive, filterLikes) {
 		while (div.hasChildNodes())
 			div.removeChild(div.lastChild);
 		var couponClickHandler = this.onClickCoupon;
 		var self = this;
-		api.getCoupons(filterCategories, onlyActive).then(function (rows) {
+		api.getCoupons(filterCategories, onlyActive, undefined, undefined, filterLikes ? likes.getIds() : undefined).then(function (rows) {
 			self.currentRows = rows;
 			for (var i = 0; i < rows.length; i++) {
 				var row = rows[i];
@@ -840,6 +853,17 @@ var likes = {
 			this.load();
 		this.data[id] = liked;
 		this.save();
+	},
+	getIds: function () {
+		if (this.data == null)
+			this.load();
+		var ids = [];
+		for (var key in this.data) {
+			if (this.data.hasOwnProperty(key) && this.data[key]) {
+				ids.push(parseInt(key));
+			}
+		}
+		return ids;
 	}
 };
 
