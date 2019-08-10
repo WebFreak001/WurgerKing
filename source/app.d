@@ -28,6 +28,13 @@ void main()
 	HTTPFileServerSettings cacheSettings = new HTTPFileServerSettings("/cache");
 	cacheSettings.maxAge = 365.days;
 	router.get("/cache/*", serveStaticFiles("public/cache", cacheSettings));
+	HTTPFileServerSettings swSettings = new HTTPFileServerSettings();
+	swSettings.maxAge = Duration.zero;
+	swSettings.preWriteCallback = delegate(scope HTTPServerRequest req,
+			scope HTTPServerResponse res, ref string physicalPath) {
+		res.headers["Cache-Control"] = "no-cache";
+	};
+	router.get("/sw.js", serveStaticFile("public/sw.js", swSettings));
 	router.get("*", serveStaticFiles("public"));
 	listenHTTP(settings, router);
 

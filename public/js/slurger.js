@@ -683,6 +683,7 @@ if ('serviceWorker' in navigator) {
 		.then(function (reg) {
 			// registration worked
 			console.log('Registration succeeded. Scope is ' + reg.scope);
+			reg.update();
 		}).catch(function (error) {
 			// registration failed
 			console.log('Registration failed with ' + error);
