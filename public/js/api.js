@@ -1,5 +1,5 @@
 var api = {
-	getCoupons: function (filterCategories, onlyActive, limit, allGeo, filterIds) {
+	getCoupons: function (filterCategories, onlyActive, limit, allGeo, filterIds, mybk) {
 		var url = "/api/coupons?";
 		if (filterCategories !== undefined)
 			url += "filterCategories=" + encodeURIComponent(JSON.stringify(filterCategories)) + "&";
@@ -11,6 +11,8 @@ var api = {
 			url += "limit=" + encodeURIComponent(limit) + "&";
 		if (allGeo !== undefined)
 			url += "allGeo=" + encodeURIComponent(allGeo ? "true" : "false") + "&";
+		if (mybk !== undefined)
+			url += "mybk=" + encodeURIComponent(mybk ? "true" : "false") + "&";
 		return fetch(url).then(function (response) { return response.json(); });
 	},
 	getPromos: function (filterStore, onlyActive, limit) {

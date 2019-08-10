@@ -203,9 +203,10 @@ var pages = {
 
 		var showActive = false;
 		var filterLikes = false;
+		var mybk = false;
 
 		function refreshItems() {
-			pages.updateCoupons(div, undefined, !showActive, filterLikes);
+			pages.updateCoupons(div, undefined, !showActive, filterLikes, mybk);
 		}
 
 		var div = this.openTitledGeneric("coupontiles", tile, "Deine Coupons", true, undefined, function () {
@@ -218,6 +219,9 @@ var pages = {
 				{
 					icon: "/img/icons/mybk.svg",
 					callback: function (e) {
+						mybk = !mybk;
+						this.children[0].src = mybk ? "/img/icons/mybk_filled.svg" : "/img/icons/mybk.svg";
+						refreshItems();
 					}
 				},
 				{
@@ -655,12 +659,12 @@ var pages = {
 	/**
 	 * @param {HTMLElement} div
 	 */
-	updateCoupons: function (div, filterCategories, onlyActive, filterLikes) {
+	updateCoupons: function (div, filterCategories, onlyActive, filterLikes, mybk) {
 		while (div.hasChildNodes())
 			div.removeChild(div.lastChild);
 		var couponClickHandler = this.onClickCoupon;
 		var self = this;
-		api.getCoupons(filterCategories, onlyActive, undefined, undefined, filterLikes ? likes.getIds() : undefined).then(function (rows) {
+		api.getCoupons(filterCategories, onlyActive, undefined, undefined, filterLikes ? likes.getIds() : undefined, mybk).then(function (rows) {
 			self.currentRows = rows;
 			for (var i = 0; i < rows.length; i++) {
 				var row = rows[i];

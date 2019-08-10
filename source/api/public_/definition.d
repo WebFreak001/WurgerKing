@@ -6,6 +6,6 @@ import api.v4.coupons;
 interface PublicAPI
 {
 	Coupon[][] getCoupons(int[] filterCategories = null, bool onlyActive = true,
-			int limit = 100, bool allGeo = false, int[] filterIds = null) @safe;
+			int limit = 100, bool allGeo = false, int[] filterIds = null, bool mybk = false) @safe;
 	Promo[] getPromos(string filterStore = null, bool onlyActive = true, int limit = 100) @safe;
 }

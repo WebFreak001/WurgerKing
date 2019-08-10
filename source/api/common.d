@@ -212,9 +212,10 @@ unittest
 	assert(rows.empty);
 }
 
-mixin template GenericCachable(T, int apiVersion, string endpoint, Duration ttl)
+mixin template GenericCachable(T, int apiVersion, int subApiVersion, string endpoint, Duration ttl)
 {
 	enum bkApiVersion = apiVersion;
+	enum bkSubApiVersion = subApiVersion;
 
 	Json[] getBKAPI()
 	{
@@ -234,6 +235,7 @@ mixin template GenericCachable(T, int apiVersion, string endpoint, Duration ttl)
 		{
 			item["_order"] = Json(cast(int) i);
 			item["_apiVer"] = Json(cast(int) apiVersion);
+			item["_subApiVer"] = Json(cast(int) subApiVersion);
 			item["_active"] = Json(true);
 			T.collection.update(["id": cast(long) item["id"].get!int], item, UpdateFlags.upsert);
 		}
