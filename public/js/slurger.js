@@ -836,11 +836,12 @@ var pages = {
 				for (var i = 1; i < unfullRows.length; i++) {
 					var other = computeRowWidth(unfullRows[i]);
 					if (len + other <= 4) {
+						len += other;
 						for (var j = 0; j < unfullRows[i].children.length; j++)
 							first.appendChild(unfullRows[i].children[j]);
 						try { div.removeChild(unfullRows[i]); } catch (e) { }
 						unfullRows.splice(i, 1);
-						if (len + other == 4)
+						if (len == 4)
 							break;
 						else
 							continue;

@@ -132,6 +132,8 @@ auto byRows(Tiles)(Tiles tiles)
 			int sum = row[0].dimension.width;
 			while (sum < 4 && rowLength < 4 && !tiles.empty)
 			{
+				if (sum + tiles.front.dimension.width > 4)
+					break;
 				row[rowLength++] = tiles.front;
 				tiles.popFront;
 				sum += row[rowLength - 1].dimension.width;
