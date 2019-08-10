@@ -30,6 +30,26 @@ function clickTile(tile) {
 	}
 }
 
+function getUsername() {
+	return window.localStorage.getItem("username") || "Jan";
+}
+
+function updateUsernames() {
+	var usernames = document.querySelectorAll(".username");
+	var name = getUsername();
+	for (var i = 0; i < usernames.length; i++) {
+		usernames[i].textContent = name;
+	}
+}
+
+function changeUsername() {
+	var newName = prompt("Neuen Namen eingeben:", getUsername());
+	if (!newName)
+		return;
+	window.localStorage.setItem("username", newName);
+	updateUsernames();
+}
+
 var bottomBar = {
 	element: document.querySelector(".bottombar"),
 	actionsContainer: null,
@@ -198,6 +218,9 @@ var pages = {
 			});
 			flkty.on("staticClick", pages.onClickPromo);
 		}
+		updateUsernames();
+
+		document.querySelector(".home > header").addEventListener("dblclick", changeUsername);
 	},
 	openCoupons: function (tile) {
 		var subtitle = new Image();

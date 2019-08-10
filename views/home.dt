@@ -4,7 +4,7 @@ block content
 	.triple.home
 		header.wonky-bottom.branded
 			img(src="/img/profile.png")
-			.profile Hallo, #{username}!
+			.profile Hallo, #[span.username Jan]!
 		main.grid
 			- import api.cache;
 			- import std.conv;

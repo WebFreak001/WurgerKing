@@ -63,7 +63,6 @@ void main()
 
 void index(HTTPServerRequest req, HTTPServerResponse res)
 {
-	string username = "Jan";
 	auto tiles = getBKTiles().byRows;
-	res.render!("home.dt", username, tiles);
+	res.render!("home.dt", tiles);
 }
