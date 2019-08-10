@@ -83,6 +83,7 @@ var pages = {
 	openBlankGeneric: function (name, tile, withBottomBar, animationDone, actions) {
 		var div = document.createElement("div");
 		this.stack.push({ div: div, withBottomBar: withBottomBar, actions: actions });
+		window.history.pushState({ name: name }, "");
 		div.className = name + " subpage loading" + (withBottomBar ? " bottomless" : "");
 		var rect = tile ? tile.getBoundingClientRect() : { x: window.innerWidth / 2 - 50, y: window.innerHeight / 2 - 50, width: 100, height: 100 };
 		div.style.left = rect.x + "px";
@@ -139,10 +140,14 @@ var pages = {
 		div.appendChild(content);
 		return content;
 	},
-	back: function () {
+	back: function (noHistory) {
 		clearTimeout(pages.animation);
 		if (pages.cancelAnimation) pages.cancelAnimation();
 		var page = this.stack.pop();
+
+		if (!noHistory && window.history.state && window.history.state.name == page.name)
+			window.history.back();
+
 		if (page) {
 			document.body.removeChild(page.div);
 		}
@@ -689,6 +694,10 @@ if ('serviceWorker' in navigator) {
 			console.log('Registration failed with ' + error);
 		});
 }
+
+window.addEventListener('popstate', function () {
+	pages.back(true);
+});
 
 var likes = {
 	data: null,
