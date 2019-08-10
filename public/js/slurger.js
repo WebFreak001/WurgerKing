@@ -265,13 +265,18 @@ var pages = {
 			var barcode;
 			var bitmap;
 			var bits = [];
+			var dpr = window.devicePixelRatio || 1;
+			var canvasWidth, canvasHeight;
+			var lastFrame = performance.now();
 
 			function reinitCanvas() {
 				var rect = qr.getBoundingClientRect();
 				var self = code.getBoundingClientRect();
 				canvas.style.width = "100%";
-				canvas.width = rect.width;
-				canvas.height = rect.height - self.y * 2 - 40; // top = bottom space - label height
+				canvasWidth = rect.width;
+				canvasHeight = rect.height - self.y * 2 - 40; // top = bottom space - label height
+				canvas.width = canvasWidth * dpr;
+				canvas.height = canvasHeight * dpr;
 				startFrame = 0;
 				endFrame = 0.15;
 
@@ -369,14 +374,20 @@ var pages = {
 						bitmap = undefined;
 					}
 				}
+
+				lastFrame = performance.now();
 			}
 
 			function redraw() {
 				if (!context)
 					return;
 
+				var now = performance.now();
+				var delta = (now - lastFrame) / 16.0;
+				lastFrame = now;
+
 				function animatedRect(w, h) {
-					var speed = w / 5000;
+					var speed = w / 3000 * delta;
 
 					if (startFrame <= 0.25 || (startFrame > 0.5 && startFrame <= 0.75))
 						startFrame += speed * h / w;
@@ -458,25 +469,26 @@ var pages = {
 					context.closePath();
 				}
 
-				context.clearRect(-100, -100, canvas.width + 200, canvas.height + 200);
+				context.clearRect(-100, -100, canvasWidth + 200, canvasHeight + 200);
 
-				var s = mode == "QR" ? canvas.height / 30 : canvas.width / 50;
+				var s = mode == "QR" ? canvasHeight / 30 : canvasWidth / 50;
 				context.resetTransform();
+				context.scale(dpr, dpr);
 
 				var w = mode == "QR" ? 30 : 40;
 				var h = mode == "QR" ? 30 : 13;
 
 				if (mode == "QR") {
-					context.translate((canvas.width - w * s) / 2, (canvas.height - h * s) / 2);
+					context.translate((canvasWidth - w * s) / 2, (canvasHeight - h * s) / 2);
 					animatedRect(w, h);
 
 					context.drawImage(bitmap, 3 * s, 3 * s, 24 * s, 24 * s);
 				} else if (mode == "EAN-13") {
-					var step = Math.floor(1 / bits.length * canvas.width);
+					var step = Math.floor(1 / bits.length * canvasWidth);
 
 					w = (6 + step * bits.length / s);
 
-					context.translate((canvas.width - w * s) / 2, (canvas.height - h * s) / 2);
+					context.translate((canvasWidth - w * s) / 2, (canvasHeight - h * s) / 2);
 					animatedRect(w, h);
 
 					context.beginPath();
@@ -524,7 +536,7 @@ var pages = {
 				if (qr.style.display == "none") {
 					qr.style.display = "";
 					if (context)
-						context.clearRect(0, 0, canvas.width, canvas.height);
+						context.clearRect(0, 0, canvasWidth, canvasHeight);
 					context = null;
 					setTimeout(function () {
 						qr.style.opacity = "1";
@@ -537,7 +549,7 @@ var pages = {
 					qr.style.opacity = "0";
 					qr.style.display = "none";
 					if (context)
-						context.clearRect(0, 0, canvas.width, canvas.height);
+						context.clearRect(0, 0, canvasWidth, canvasHeight);
 					context = null;
 				}
 			});
