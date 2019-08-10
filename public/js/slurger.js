@@ -378,7 +378,7 @@ var pages = {
 						bits.push(1, 0, 1);
 					}
 
-					var step = Math.floor(1 / bits.length * canvasWidth);
+					var step = Math.floor(1 / bits.length * canvas.width) / dpr;
 					bitmap = document.createElement("canvas");
 					bitmap.width = step * bits.length + 1;
 					bitmap.height = 9 * canvasWidth / 50;
@@ -504,7 +504,7 @@ var pages = {
 
 					context.drawImage(bitmap, 3 * s, 3 * s, 24 * s, 24 * s);
 				} else if (mode == "EAN-13") {
-					var step = Math.floor(1 / bits.length * canvasWidth);
+					var step = Math.floor(1 / bits.length * canvas.width) / dpr;
 
 					w = (6 + step * bits.length / s);
 					context.translate((canvasWidth - w * s) / 2, (canvasHeight - h * s) / 2);
