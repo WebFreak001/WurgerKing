@@ -21,6 +21,9 @@ void main()
 
 	router.registerRestInterface(new PublicAPIImpl(), "/api");
 
+	if (!existsFile("public/cache"))
+		createDirectory("public/cache");
+
 	router.get("/", &index);
 	HTTPFileServerSettings cacheSettings = new HTTPFileServerSettings("/cache");
 	cacheSettings.maxAge = 365.days;
