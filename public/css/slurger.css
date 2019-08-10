@@ -6,6 +6,7 @@ body, html {
 	min-width: 100%;
 	min-height: 100%;
 	background-color: #fcf6f0;
+	overscroll-behavior: contain;
 }
 
 body {
@@ -565,8 +566,4 @@ footer.bottombar .right .action .badge {
 
 .tile.inactive.old {
 	opacity: 0.4;
-}
-
-.subpage.coupontiles, .subpage.coupon, .filter-settings, .filter-backdrop {
-	overscroll-behavior: contain;
 }
