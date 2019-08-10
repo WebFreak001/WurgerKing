@@ -3,5 +3,5 @@
 		"vibe-d": "~>0.8.3"
 	},
 	"name": "bk-webapp",
-	"license": "GPL-3.0"
+	"license": "MIT"
 }

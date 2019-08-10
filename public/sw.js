@@ -1,5 +1,5 @@
 self.addEventListener('install', function (event) {
-	if (event.skipWaiting) {
+	if (navigator.onLine && event.skipWaiting) {
 		event.skipWaiting();
 	}
 
