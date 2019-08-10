@@ -274,7 +274,7 @@ var pages = {
 				var self = code.getBoundingClientRect();
 				canvas.style.width = "100%";
 				canvasWidth = rect.width;
-				canvasHeight = rect.height - self.y * 2 - 40; // top = bottom space - label height
+				canvasHeight = rect.height - (self.y - rect.y) * 2 - 40; // top = bottom space - label height
 				canvas.width = canvasWidth * dpr;
 				canvas.height = canvasHeight * dpr;
 				startFrame = 0;
@@ -371,8 +371,23 @@ var pages = {
 							bits.push.apply(bits, c);
 						}
 						bits.push(1, 0, 1);
-						bitmap = undefined;
 					}
+
+					var step = Math.floor(1 / bits.length * canvasWidth);
+					bitmap = document.createElement("canvas");
+					bitmap.width = step * bits.length + 1;
+					bitmap.height = 9 * canvasWidth / 50;
+					var c2 = bitmap.getContext("2d");
+
+					c2.beginPath();
+					c2.fillStyle = "#682f1c";
+					c2.translate(0.5, -0.5);
+					for (var x = 0; x < bits.length; x++) {
+						if (bits[x] != 0)
+							c2.rect(x * step, 0, step, bitmap.height);
+						c2.fill();
+					}
+					c2.translate(0.5, 0.5);
 				}
 
 				lastFrame = performance.now();
@@ -487,19 +502,10 @@ var pages = {
 					var step = Math.floor(1 / bits.length * canvasWidth);
 
 					w = (6 + step * bits.length / s);
-
 					context.translate((canvasWidth - w * s) / 2, (canvasHeight - h * s) / 2);
 					animatedRect(w, h);
 
-					context.beginPath();
-					context.fillStyle = "#682f1c";
-					context.translate(-0.5, -0.5);
-					for (var x = 0; x < bits.length; x++) {
-						if (bits[x] != 0)
-							context.rect(x * step + 3 * s, 2 * s - 1, step, (h - 4) * s);
-						context.fill();
-					}
-					context.translate(0.5, 0.5);
+					context.drawImage(bitmap, 3 * s, 2 * s - 1);
 				}
 
 				if (requestAnimationFrame)
