@@ -1,6 +1,8 @@
 self.addEventListener('install', function (event) {
+	event.skipWaiting();
+
 	event.waitUntil(
-		caches.open('v2.4').then(function (cache) {
+		caches.open('v2.5').then(function (cache) {
 			return cache.addAll([
 				'/',
 				'/manifest.json',
