@@ -4,6 +4,8 @@ public import api.cache;
 
 import vibe.data.serialization;
 
+import core.time;
+
 import std.algorithm;
 import std.array;
 import std.range;
@@ -24,11 +26,10 @@ struct Images
 	string bgColor;
 }
 
-mixin template TileCommons()
+mixin template ItemCommons()
 {
 	import std.typecons : Nullable;
 
-	Dimension dimension;
 	int id;
 	long modified;
 	string title;
@@ -37,12 +38,18 @@ mixin template TileCommons()
 	Nullable!long to;
 }
 
+mixin template TileCommons()
+{
+	Dimension dimension;
+	mixin ItemCommons;
+}
+
 struct Dimension
 {
 	int width = 2, height = 2;
 }
 
-void cacheImages(Images images)
+void cacheImages(Images images) @safe
 {
 	if (!images.bgImage.isNull)
 		proxyImage(images.bgImage.url);
@@ -50,11 +57,18 @@ void cacheImages(Images images)
 		proxyImage(images.fgImage.url);
 }
 
+void proxyImages(ref Images images) @safe
+{
+	if (!images.bgImage.isNull)
+		images.bgImage.url = proxyImage(images.bgImage.url);
+	if (!images.fgImage.isNull)
+		images.fgImage.url = proxyImage(images.fgImage.url);
+}
+
 enum isTilable(T) = __traits(hasMember, T.init, "dimension")
 	&& is(typeof(__traits(getMember, T.init, "dimension")) : Dimension);
 
-auto compactRows(Tile)(Tile[] tiles)
-		if (isTilable!Tile)
+auto compactRows(Tile)(Tile[] tiles) if (isTilable!Tile)
 {
 	int sum = 0;
 	for (size_t i = 0; i < tiles.length; i++)
@@ -177,10 +191,8 @@ unittest
 
 	// test gap compression (2, 4, 2)
 	tiles = [
-		SimpleTile(Dimension(4, 4), 1),
-		SimpleTile(Dimension(2, 2), 2),
-		SimpleTile(Dimension(4, 4), 3),
-		SimpleTile(Dimension(2, 2), 4),
+		SimpleTile(Dimension(4, 4), 1), SimpleTile(Dimension(2, 2), 2),
+		SimpleTile(Dimension(4, 4), 3), SimpleTile(Dimension(2, 2), 4),
 		SimpleTile(Dimension(4, 4), 5),
 	];
 	rows = tiles.compactRows.byRows;
@@ -198,4 +210,32 @@ unittest
 	assert(rows.front[0].id == 5);
 	rows.popFront();
 	assert(rows.empty);
+}
+
+mixin template GenericCachable(T, int apiVersion, string endpoint, Duration ttl)
+{
+	enum bkApiVersion = apiVersion;
+
+	Json[] getBKAPI()
+	{
+		return requestBK!(Json[])(URL(endpoint), ttl);
+	}
+
+	void updateItems()
+	{
+		auto items = getBKAPI();
+		auto ids = items.map!(a => Json(a["id"].get!int)).array;
+		T.collection.update(["id": Json(["$nin": Json(ids)]), "_active": Json(true)],
+				[
+					"$set": Json(["_active": Json(false)]),
+					"$inc": Json(["_order": Json(1000)])
+				], UpdateFlags.multiUpdate);
+		foreach (i, item; items)
+		{
+			item["_order"] = Json(cast(int) i);
+			item["_apiVer"] = Json(cast(int) apiVersion);
+			item["_active"] = Json(true);
+			T.collection.update(["id": cast(long) item["id"].get!int], item, UpdateFlags.upsert);
+		}
+	}
 }

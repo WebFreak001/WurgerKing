@@ -39,9 +39,18 @@ struct Tile
 
 Tile[] getBKTiles()
 {
-	return requestBK!(Tile[])(
+	auto ret = requestBK!(Tile[])(
 			URL("https://api.burgerking.de/api/o2uvrPdUY57J5WwYs6NtzZ2Knk7TnAUY/v3/de/de/tiles/"),
 			6.hours);
+	foreach (ref item; ret)
+		if (item.type == "menuPromo")
+		{
+			auto data = item.data.deserializeJson!(Tile.PromoData);
+			foreach (ref promo; data.promos)
+				proxyImages(promo.images);
+			item.data = serializeToJson(data);
+		}
+	return ret;
 }
 
 void cacheTile(Tile tile)

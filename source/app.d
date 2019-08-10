@@ -2,6 +2,7 @@ import vibe.vibe;
 
 import api.common;
 import api.public_.impl;
+import api.v2.promos;
 import api.v3.tiles;
 import api.v4.coupons;
 
@@ -14,8 +15,12 @@ void main()
 	settings.bindAddresses = ["::1", "0.0.0.0"];
 
 	auto db = connectMongoDB("mongodb://127.0.0.1").getDatabase("wurgerking");
+
 	Coupon.collection = db["coupons"];
 	Coupon.collection.ensureIndex([tuple("id", 1)], IndexFlags.unique);
+
+	Promo.collection = db["promos"];
+	Promo.collection.ensureIndex([tuple("id", 1)], IndexFlags.unique);
 
 	auto router = new URLRouter;
 
@@ -43,9 +48,11 @@ void main()
 		foreach (tile; getBKTiles())
 			tile.cacheTile();
 		updateCoupons();
+		updatePromos();
 	});
 
 	setTimer(80.minutes, { updateCoupons(); }, true);
+	setTimer(130.minutes, { updatePromos(); }, true);
 
 	runApplication();
 }

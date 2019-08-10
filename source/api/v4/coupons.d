@@ -36,28 +36,12 @@ struct Coupon
 	static MongoCollection collection;
 }
 
-enum couponApiVersion = 4;
-Json[] getBKCoupons()
-{
-	return requestBK!(Json[])(
-			URL("https://api.burgerking.de/api/o2uvrPdUY57J5WwYs6NtzZ2Knk7TnAUY/v4/de/de/coupons/"),
-			70.minutes);
-}
+mixin GenericCachable!(Coupon, 4,
+		"https://api.burgerking.de/api/o2uvrPdUY57J5WwYs6NtzZ2Knk7TnAUY/v4/de/de/coupons/", 70.minutes) couponApi;
 
-void updateCoupons()
-{
-	auto coupons = getBKCoupons();
-	auto ids = coupons.map!(a => a["id"].get!int).array;
-	Coupon.collection.update(["id": ["$nin": ids]],
-			["$set": ["_active": Json(false), "_order": Json(1000)]], UpdateFlags.multiUpdate);
-	foreach (i, coupon; coupons)
-	{
-		coupon["_order"] = Json(cast(int) i);
-		coupon["_apiVer"] = Json(couponApiVersion);
-		coupon["_active"] = Json(true);
-		Coupon.collection.update(["id": cast(long) coupon["id"].get!int], coupon, UpdateFlags.upsert);
-	}
-}
+enum couponApiVersion = couponApi.bkApiVersion;
+alias getBKCoupons = couponApi.getBKAPI;
+alias updateCoupons = couponApi.updateItems;
 
 void cacheCoupon(Coupon coupon)
 {

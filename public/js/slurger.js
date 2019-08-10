@@ -5,7 +5,6 @@ function clickTile(tile) {
 	console.log("click " + type)
 	switch (type) {
 		case "menuPromo":
-			pages.openPromo(tile);
 			break;
 		case "menuCoupon":
 			pages.openCoupons(tile);
@@ -173,8 +172,30 @@ var pages = {
 			subPages[i].parentElement.removeChild(subPages[i]);
 		bottomBar.hide();
 	},
-	openPromo: function (tile) {
+	onLoad: function () {
+		var promos = document.querySelector('[data-type="menuPromo"]');
+		if (promos) {
+			var carousel = document.createElement("div");
+			carousel.className = "promolist carousel";
+			promos.appendChild(carousel);
 
+			var items = JSON.parse(promos.getAttribute("data-json")).promos;
+
+			for (var i = 0; i < items.length; i++) {
+				var promo = document.createElement("div");
+				promo.setAttribute("data-json", JSON.stringify(items[i]));
+				promo.className = "carousel-cell promo";
+				insertImages(promo, items[i].images, "data-flickity-lazyload");
+				carousel.appendChild(promo);
+			}
+
+			var flkty = new Flickity(carousel, {
+				lazyLoad: 1,
+				prevNextButtons: false,
+				wrapAround: true
+			});
+			flkty.on("staticClick", pages.onClickPromo);
+		}
 	},
 	openCoupons: function (tile) {
 		var subtitle = new Image();
@@ -569,7 +590,7 @@ var pages = {
 			infos.className = "highlit-panel coupon-panel";
 
 			var name = document.createElement("h3");
-			name.textContent = data.title;
+			name.textContent = data.title.replace(/®/g, ""); // the ® sign looks too weird, so we strip it out from the big title
 			infos.appendChild(name);
 
 			if (typeof data.description == "string" && data.description.length > 0) {
@@ -594,13 +615,23 @@ var pages = {
 			maps.className = "fullmaps";
 			maps.src = "/img/generic_maps.png";
 			container.appendChild(maps);
+
+			var details = document.createElement("div");
+			details.className = "details htmlview";
+			try {
+				insertHTMLInto(data.footnote, details);
+			}
+			catch (e) {
+				console.error("Error in footnote: ", data.footnote, e);
+			}
+			container.appendChild(details);
 		}, [
 				{
 					icon: "/img/icons/share.svg",
 					callback: function () {
 						if (navigator.share) {
 							navigator.share({
-								text: "Gutscheine statt Geldscheine.\n" + data.title + " für " + data.price,
+								text: "Gutscheine statt Geldscheine.\n" + data.title + " für " + data.price + "\n",
 								url: "burgerking://coupons/" + data.id
 							})
 						}
@@ -639,8 +670,74 @@ var pages = {
 				}
 			}
 		});
+	},
+	onClickPromo: function (event) {
+		var data = JSON.parse(this.selectedElement.getAttribute("data-json"));
+		var activePromo = data.promoId;
+		var promos = api.getPromos();
+		var div = pages.openBlankGeneric("promos", this.parentElement, true, function () {
+			promos.then(function (promos) {
+				var carousel = document.createElement("div");
+				carousel.className = "carousel";
+				div.appendChild(carousel);
+
+				var targetIndex;
+				for (var i = 0; i < promos.length; i++) {
+					var cell = document.createElement("div");
+					cell.className = "carousel-cell promo";
+					renderPromo(cell, promos[i]);
+					carousel.appendChild(cell);
+					if (promos[i].id == activePromo)
+						targetIndex = i;
+				}
+
+				var flkty = new Flickity(carousel, {
+					lazyLoad: 1,
+					prevNextButtons: false,
+					contain: true,
+					wrapAround: false,
+					adaptiveHeight: true,
+					pageDots: false,
+					initialIndex: targetIndex
+				});
+				flkty.on("change", function (index) {
+					activePromo = promos[index].id;
+					console.log(activePromo);
+				});
+				// TODO: add page dots to footer (generic API)
+			});
+		}, [
+				{
+					icon: "/img/icons/share.svg",
+					callback: function () {
+						if (navigator.share) {
+							navigator.share({
+								text: "Wir haben die News. Du hast den Hunger.\n", // <-- WTF burger king
+								url: "burgerking://promos/" + activePromo
+							})
+						}
+					}
+				}
+			]);
 	}
 };
+
+function insertImages(div, images, attr) {
+	if (attr === undefined)
+		attr = "src";
+
+	if (images.bgImage) {
+		var img1 = document.createElement("img");
+		img1.setAttribute(attr, images.bgImage.url);
+		div.appendChild(img1);
+	}
+
+	if (images.fgImage) {
+		var img2 = document.createElement("img");
+		img2.setAttribute(attr, images.fgImage.url);
+		div.appendChild(img2);
+	}
+}
 
 function renderTile(div, tile) {
 	if (tile.images.bgColor.length == 6)
@@ -651,19 +748,7 @@ function renderTile(div, tile) {
 
 	var content = document.createElement("div");
 	content.className = "content wonky";
-
-	if (tile.images.bgImage) {
-		var img1 = document.createElement("img");
-		img1.src = tile.images.bgImage.url;
-		content.appendChild(img1);
-	}
-
-	if (tile.images.fgImage) {
-		var img2 = document.createElement("img");
-		img2.src = tile.images.fgImage.url;
-		content.appendChild(img2);
-	}
-
+	insertImages(content, tile.images);
 	div.appendChild(content);
 
 	var like = document.createElement("img");
@@ -675,6 +760,32 @@ function renderTile(div, tile) {
 	div.appendChild(like);
 
 	return content;
+}
+
+function renderPromo(div, promo) {
+	var img = document.createElement("div");
+	img.className = "promoimg";
+	insertImages(img, promo.images, "data-flickity-lazyload");
+	div.appendChild(img);
+
+	var infos = document.createElement("div");
+	infos.className = "highlit-panel promo-panel htmlview";
+	div.appendChild(infos);
+
+	var name = document.createElement("h3");
+	name.textContent = promo.title.replace(/®/g, ""); // the ® sign looks too weird, so we strip it out from the big title
+	infos.appendChild(name);
+
+	if (typeof promo.description == "string" && promo.description.length > 0) {
+		insertHTMLInto(promo.description, infos);
+	}
+
+	var footnote = document.createElement("div");
+	footnote.className = "highlit-panel promo-panel footnote htmlview";
+	div.appendChild(footnote);
+	if (typeof promo.footnote == "string" && promo.footnote.length > 0) {
+		insertHTMLInto(promo.footnote, footnote);
+	}
 }
 
 var tiles = document.querySelectorAll(".tile");
@@ -731,6 +842,53 @@ var likes = {
 		this.save();
 	}
 };
+
+function insertHTMLInto(htmlText, elem) {
+	var footnote = new DOMParser().parseFromString(htmlText, "text/html").body;
+	function filterHTMLElement(elem) {
+		var tag = "";
+		if (["SMALL", "P", "DIV", "A"].indexOf(elem.tagName) != -1) {
+			tag = elem.tagName;
+		} else {
+			return document.createTextNode(elem.textContent);
+		}
+
+		var ret = document.createElement(tag);
+		var allowedAttrs = {
+			A: ["href", "tabindex"]
+		}
+		var attrs = allowedAttrs[tag];
+		if (attrs) {
+			for (var i = 0; i < attrs.length; i++) {
+				var attr = elem.getAttribute(attrs[i]);
+				if (attr !== null)
+					ret.setAttribute(attrs[i], attr);
+			}
+		}
+
+		if (tag == "A") {
+			ret.setAttribute("target", "_blank");
+		}
+
+		for (var i = 0; i < elem.childNodes.length; i++) {
+			ret.appendChild(filterHTMLElement(elem.childNodes[i]));
+		}
+		return ret;
+	}
+	for (var i = 0; i < footnote.children.length; i++)
+		elem.appendChild(filterHTMLElement(footnote.children[i]));
+}
+
+var _didLoad = false;
+function _loadCB() {
+	if (_didLoad)
+		return;
+	_didLoad = true;
+	pages.onLoad();
+}
+try { document.addEventListener("DOMContentLoaded", _loadCB, false); } catch (e) { console.error("failed attaching load event", e); }
+try { window.addEventListener("load", _loadCB, false); } catch (e) { console.error("failed attaching load event", e); }
+try { document.attachEvent("onreadystatechange", _loadCB, false); } catch (e) { }
 
 if (autoNavigate)
 	window.onload = function () { pages.openCoupons() };

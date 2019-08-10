@@ -2,6 +2,7 @@ module api.public_.impl;
 
 import api.common;
 import api.public_.definition;
+import api.v2.promos;
 import api.v4.coupons;
 
 import std.algorithm;
@@ -12,7 +13,8 @@ import vibe.core.log;
 
 class PublicAPIImpl : PublicAPI
 {
-	Coupon[][] getCoupons(int[] filterCategories = null, bool onlyActive = true, int limit = 100, bool allGeo = false) @safe
+	Coupon[][] getCoupons(int[] filterCategories = null, bool onlyActive = true,
+			int limit = 100, bool allGeo = false) @safe
 	{
 		if (limit < 1)
 			limit = 1;
@@ -30,11 +32,29 @@ class PublicAPIImpl : PublicAPI
 
 		return Coupon.collection.find(query).sort(["_order": 1]).limit(limit).map!((a) {
 			auto ret = a.deserializeBson!Coupon;
-			if (!ret.images.bgImage.isNull)
-				ret.images.bgImage.url = proxyImage(ret.images.bgImage.url);
-			if (!ret.images.fgImage.isNull)
-				ret.images.fgImage.url = proxyImage(ret.images.fgImage.url);
+			proxyImages(ret.images);
 			return ret;
 		}).array.compactRows.byRows.array;
+	}
+
+	Promo[] getPromos(string filterStore = null, bool onlyActive = true, int limit = 100) @safe
+	{
+		if (limit < 1)
+			limit = 1;
+		else if (limit > 100)
+			limit = 100;
+
+		Bson[string] query;
+		query["_apiVer"] = Bson(promoApiVersion);
+		if (onlyActive)
+			query["_active"] = Bson(true);
+		if (filterStore.length)
+			query["storesFilter"] = Bson(filterStore);
+
+		return Promo.collection.find(query).sort(["_order": 1]).limit(limit).map!((a) {
+			auto ret = a.deserializeBson!Promo;
+			proxyImages(ret.images);
+			return ret;
+		}).array;
 	}
 }

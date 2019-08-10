@@ -102,7 +102,7 @@ body {
 	flex-direction: row;
 }
 
-.grid > .row > .tile, .bigtile {
+.grid > .row > .tile, .bigtile, .subpage.promos .promoimg {
 	flex-shrink: 1;
 	display: block;
 	position: relative;
@@ -142,12 +142,35 @@ body {
 	padding-top: 50%;
 }
 
-.grid > .row > .tile > .content, .grid > .row > .tile img, .bigtile > .content, .bigtile img, .bigtile .qrcode {
+.grid > .row > .tile > .content, .grid > .row > .tile img, .bigtile > .content, .bigtile img, .bigtile .qrcode, .promolist, .promolist .carousel-cell, .subpage.promos .promoimg img {
 	position: absolute;
 	left: 0;
 	top: 0;
 	width: 100%;
 	height: 100%;
+}
+
+.promolist .flickity-page-dots
+{
+	bottom: 10px;
+}
+
+.promolist .flickity-page-dots .dot
+{
+	background-color: #fcf6f0;
+	opacity: 0.5;
+	margin: 0 4px;
+}
+
+.promolist .flickity-page-dots .dot.is-selected
+{
+	opacity: 1;
+}
+
+.promolist .flickity-page-dots .dot:first-child:not(.is-selected),
+.promolist .flickity-page-dots .dot:last-child:not(.is-selected)
+{
+	transform: scale(0.5);
 }
 
 .grid > .row > .tile img.like, .bigtile img.like {
@@ -224,7 +247,7 @@ body {
 	font-weight: normal;
 }
 
-.highlit-panel p.description, .bigtile .qrcode .toplabel, .bigtile .qrcode .bottomlabel {
+.highlit-panel p.description, .bigtile .qrcode .toplabel, .bigtile .qrcode .bottomlabel, .htmlview {
 	font-family: 'Overpass', 'Open Sans', Roboto, Arial, sans-serif;
 }
 
@@ -402,4 +425,44 @@ footer.bottombar .right .action.icon img {
 .bigtile .qrcode .toplabel {
 	margin-top: 2rem;
 	margin-bottom: 0.3rem;
+}
+
+.htmlview {
+	margin: 1rem;
+}
+
+.htmlview small {
+	color: #ad8b7c;
+}
+
+.htmlview a {
+	text-decoration: none;
+	color: #f7b739;
+}
+
+.subpage.promos .carousel-cell {
+	width: 100%;
+}
+
+.subpage.promos .carousel-cell > * {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.subpage.promos .carousel-cell .highlit-panel {
+	margin: 0;
+}
+
+.subpage.promos .promoimg {
+	width: 100%;
+}
+
+.subpage.promos .promoimg:before {
+	display: block;
+	content: "";
+	padding-top: 100%;
+}
+
+.htmlview p {
+	margin: 0;
 }

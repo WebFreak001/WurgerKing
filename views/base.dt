@@ -13,6 +13,7 @@ html(lang="de")
 
 		link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Kalam:300|Passion+One|Overpass")
 		link(rel="stylesheet", href="/css/materialdesignicons.min.css")
+		link(rel="stylesheet", href="/css/flickity.min.css")
 		link(rel="stylesheet", href="/css/slurger.css")
 		block head
 	body
@@ -20,4 +21,5 @@ html(lang="de")
 		block scripts
 			script(src="/js/api.js")
 			script(src="/js/qr.min.js")
+			script(src="/js/flickity.pkgd.min.js")
 			script(src="/js/slurger.js")

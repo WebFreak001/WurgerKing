@@ -49,7 +49,9 @@ string cacheName(string s) @trusted
 string proxyImage(string url, Duration lifetime = 3650.days) @safe
 {
 	url = url.replace("%{resolution}", "640");
-	if (url.startsWith("/"))
+	if (url.startsWith("/cache/") && !url.canFind(".."))
+		return url;
+	else if (url.startsWith("/"))
 		url = "https://api.burgerking.de" ~ url;
 	return proxyFile(URL(url), lifetime);
 }

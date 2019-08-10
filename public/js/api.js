@@ -1,5 +1,5 @@
 var api = {
-	getCoupons: function (filterCategories, onlyActive, limit) {
+	getCoupons: function (filterCategories, onlyActive, limit, allGeo) {
 		var url = "/api/coupons?";
 		if (filterCategories !== undefined)
 			url += "filterCategories=" + encodeURIComponent(JSON.stringify(filterCategories)) + "&";
@@ -7,6 +7,18 @@ var api = {
 			url += "onlyActive=" + encodeURIComponent(onlyActive ? "true" : "false") + "&";
 		if (limit !== undefined)
 			url += "limit=" + encodeURIComponent(limit) + "&";
-		return fetch(url).then(function(response) { return response.json(); });
-	}
+		if (allGeo !== undefined)
+			url += "allGeo=" + encodeURIComponent(allGeo ? "true" : "false") + "&";
+		return fetch(url).then(function (response) { return response.json(); });
+	},
+	getPromos: function (filterStore, onlyActive, limit) {
+		var url = "/api/promos?";
+		if (filterStore !== undefined)
+			url += "filterStore=" + encodeURIComponent(filterStore) + "&";
+		if (onlyActive !== undefined)
+			url += "onlyActive=" + encodeURIComponent(onlyActive ? "true" : "false") + "&";
+		if (limit !== undefined)
+			url += "limit=" + encodeURIComponent(limit) + "&";
+		return fetch(url).then(function (response) { return response.json(); });
+	},
 };
