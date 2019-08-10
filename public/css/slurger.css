@@ -63,6 +63,10 @@ body {
 	mask-image: url(/img/bk_logo_bw.svg);
 }
 
+.filler {
+	flex-grow: 1;
+}
+
 .home footer, .home header, footer.bottombar {
 	background-color: #fcf6f0;
 	width: 100%;
@@ -299,7 +303,19 @@ footer.bottombar .mdi {
 	text-align: center;
 }
 
-footer.bottombar .mdi:before {
+.home footer .mdi {
+	line-height: 64px;
+	height: 64px;
+	width: 64px;
+	text-align: center;
+	margin: 0;
+}
+
+.home footer .refresh:hover {
+	background-color: #fae5d0;
+}
+
+footer.bottombar .mdi:before, .home footer .mdi:before {
 	vertical-align: bottom;
 }
 
@@ -554,10 +570,6 @@ footer.bottombar .right .action .badge {
 .filter-settings .header .reset,
 .filter-settings .header .apply {
 	padding: 1.5rem 0;
-}
-
-.filter-settings .header .filler {
-	flex-grow: 1;
 }
 
 .tile.inactive {

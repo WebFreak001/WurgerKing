@@ -23,6 +23,8 @@ block content
 		footer
 			.info
 			.flag
+			.filler
+			.refresh.mdi.mdi-refresh
 	footer.bottombar.hidden
 		.close.mdi.mdi-chevron-left
 		.right

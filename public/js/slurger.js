@@ -1229,3 +1229,7 @@ window.addEventListener("beforeinstallprompt", function (e) {
 
 	document.body.appendChild(banner);
 });
+
+document.querySelector(".home footer .refresh").addEventListener("click", function () {
+	window.location.reload();
+});
