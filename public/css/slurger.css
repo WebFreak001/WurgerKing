@@ -566,3 +566,7 @@ footer.bottombar .right .action .badge {
 .tile.inactive.old {
 	opacity: 0.4;
 }
+
+.subpage.coupontiles, .subpage.coupon, .filter-settings, .filter-backdrop {
+	overscroll-behavior: contain;
+}
