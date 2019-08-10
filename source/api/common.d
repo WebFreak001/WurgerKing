@@ -224,12 +224,14 @@ mixin template GenericCachable(T, int apiVersion, int subApiVersion, string endp
 
 	void updateItems()
 	{
+		import vibe.data.bson : Bson;
+		import vibe.data.json : Json;
+
 		auto items = getBKAPI();
-		auto ids = items.map!(a => Json(a["id"].get!int)).array;
-		T.collection.update(["id": Json(["$nin": Json(ids)]), "_active": Json(true)],
-				[
-					"$set": Json(["_active": Json(false)]),
-					"$inc": Json(["_order": Json(1000)])
+		auto ids = items.map!(a => Bson(a["id"].get!int)).array;
+		T.collection.update(["id": Bson(["$nin": Bson(ids)]),
+				"_active": Bson(true)], [
+				"$set": ["_active": Bson(false), "_order": Bson(1000)],
 				], UpdateFlags.multiUpdate);
 		foreach (i, item; items)
 		{

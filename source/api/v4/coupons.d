@@ -32,6 +32,7 @@ struct Coupon
 	int[] categories;
 	bool myBkOnly;
 	bool myBkOnetime;
+	bool _active;
 
 @ignore:
 	static MongoCollection collection;

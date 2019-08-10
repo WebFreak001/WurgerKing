@@ -109,7 +109,7 @@ T requestBK(T)(URL endpoint, Duration lifetime = 1.days)
 		Json json;
 		requestHTTP(endpoint, null, (scope res) {
 			if (res.statusCode != 200)
-				throw new Exception("Got invalid status code " ~ res.statusCode.to!string);
+				throw new Exception("Got unexpected status code " ~ res.statusCode.to!string);
 
 			json = res.readJson();
 			ret = json.deserializeJson!T;

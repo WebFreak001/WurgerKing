@@ -58,6 +58,8 @@ var bottomBar = {
 				btn.appendChild(elem);
 				if (action.callback)
 					btn.addEventListener("click", action.callback);
+				if (action.onCreate)
+					action.onCreate(btn);
 				this.actionsContainer.appendChild(btn);
 			}
 		}
@@ -201,13 +203,106 @@ var pages = {
 		var subtitle = new Image();
 		subtitle.src = "/img/subtitle_coupons.png";
 
-		var showActive = false;
+		var showInactive = false;
 		var filterLikes = false;
 		var mybk = false;
+		var filterCategories = [];
+		var filterBtn = undefined;
+
+		var backdrop = document.createElement("div");
+		backdrop.className = "filter-backdrop";
+		backdrop.style.display = "none";
+
+		var settings = document.createElement("div");
+		settings.className = "filter-settings";
+		settings.style.display = "none";
+		settings.classList.add("hidden");
+
+		var header = document.createElement("div");
+		header.className = "header";
+		var title = document.createElement("h4");
+		title.textContent = "Filter";
+		header.appendChild(title);
+
+		var resetButton = document.createElement("div");
+		resetButton.className = "reset";
+		resetButton.textContent = "zurücksetzen";
+		header.appendChild(resetButton);
+
+		var filler = document.createElement("div");
+		filler.className = "filler";
+		header.appendChild(filler);
+
+		var applyButton = document.createElement("div");
+		applyButton.className = "apply";
+		applyButton.textContent = "anwenden";
+		header.appendChild(applyButton);
+
+		settings.appendChild(header);
+
+		var itemsContainer = document.createElement("div");
+		itemsContainer.className = "items";
+		settings.appendChild(itemsContainer);
+
+		var items = document.createElement("div");
+		items.className = "filters";
+		itemsContainer.appendChild(items);
 
 		function refreshItems() {
-			pages.updateCoupons(div, undefined, !showActive, filterLikes, mybk);
+			pages.updateCoupons(div, items, refreshItems, filterCategories, !showInactive, filterLikes, mybk).then(function (data) {
+				var badge = filterBtn.querySelector(".badge");
+				if (!badge) {
+					badge = document.createElement("div");
+					badge.className = "badge";
+					filterBtn.appendChild(badge);
+				}
+				badge.textContent = data.count.toString();
+			});
+			var changed = showInactive || filterCategories.length > 0;
+			if (filterBtn)
+				filterBtn.children[0].src = changed ? "/img/icons/filter_filled.svg" : "/img/icons/filter.svg";
+			resetButton.style.display = changed ? "" : "none";
 		}
+
+		function openFilters() {
+			backdrop.style.display = "block";
+			settings.style.display = "block";
+			settings.classList.add("hidden");
+			setTimeout(function () {
+				settings.classList.remove("hidden");
+			}, 30);
+		}
+
+		function closeFilters() {
+			backdrop.style.display = "none";
+			settings.classList.add("hidden");
+			setTimeout(function () {
+				settings.style.display = "none";
+			}, 100);
+		}
+
+		function toggleFilters() {
+			if (backdrop.style.display == "none") {
+				openFilters();
+			} else {
+				closeFilters();
+			}
+		}
+
+		resetButton.onclick = function () {
+			showInactive = false;
+			filterCategories.splice(0, filterCategories.length);
+			refreshItems();
+			closeFilters();
+		};
+
+		applyButton.onclick = closeFilters;
+
+		var inactiveToggle = createFilterItem(undefined, "Versteckte/Abgelaufene Anzeigen", showInactive, function (active) {
+			showInactive = active;
+			refreshItems();
+		});
+		itemsContainer.appendChild(inactiveToggle);
 
 		var div = this.openTitledGeneric("coupontiles", tile, "Deine Coupons", true, undefined, function () {
 			var title = div.parentElement.querySelector(".title");
@@ -215,6 +310,9 @@ var pages = {
 			img.classList.add("subtitle");
 			img.src = subtitle.src;
 			title.appendChild(img);
+
+			div.parentElement.appendChild(backdrop);
+			div.parentElement.appendChild(settings);
 		}, [
 				{
 					icon: "/img/icons/mybk.svg",
@@ -239,11 +337,12 @@ var pages = {
 				},
 				{
 					icon: "/img/icons/filter.svg",
+					onCreate: function (elem) {
+						filterBtn = elem;
+					},
 					callback: function (e) {
-						// TODO: add category filter here
-						showActive = !showActive;
-						this.children[0].src = showActive ? "/img/icons/filter_filled.svg" : "/img/icons/filter.svg";
-						refreshItems();
+						filterBtn = this;
+						toggleFilters();
 					}
 				}
 			]);
@@ -658,13 +757,22 @@ var pages = {
 	},
 	/**
 	 * @param {HTMLElement} div
+	 * @param {HTMLElement} settings
 	 */
-	updateCoupons: function (div, filterCategories, onlyActive, filterLikes, mybk) {
+	updateCoupons: function (div, settings, updateFilters, filterCategories, onlyActive, filterLikes, mybk) {
 		while (div.hasChildNodes())
 			div.removeChild(div.lastChild);
+
+		var categories = meta.getProductCategories();
+
 		var couponClickHandler = this.onClickCoupon;
 		var self = this;
-		api.getCoupons(filterCategories, onlyActive, undefined, undefined, filterLikes ? likes.getIds() : undefined, mybk).then(function (rows) {
+		return api.getCoupons(undefined, onlyActive, undefined, undefined, filterLikes ? likes.getIds() : undefined, mybk).then(function (rows) {
+			var flattend = [];
+			var count = 0;
+			var usedCategories = [];
+			var unfullRows = [];
+
 			self.currentRows = rows;
 			for (var i = 0; i < rows.length; i++) {
 				var row = rows[i];
@@ -675,6 +783,14 @@ var pages = {
 					var cell = row[j];
 					var td = document.createElement("div");
 					td.className = "tile";
+					if (cell._active === false) {
+						td.classList.add("inactive");
+						var expires = new Date(cell.to * 1000);
+						var now = new Date();
+						var diff = now.getTime() - expires.getTime();
+						if (diff > 30 * 24 * 60 * 60 * 1000)
+							td.classList.add("old");
+					}
 					var content = renderTile(td, cell);
 					content.addEventListener("click", couponClickHandler);
 					if (autoNavigate) {
@@ -683,9 +799,95 @@ var pages = {
 							content.click();
 						}, 400);
 					}
-					tr.appendChild(td);
+					flattend.push(cell);
+
+					var anyUsed = false;
+					if (Array.isArray(cell.categories))
+						for (var k = 0; k < cell.categories.length; k++) {
+							if (usedCategories.indexOf(cell.categories[k]) == -1)
+								usedCategories.push(cell.categories[k]);
+
+							if (filterCategories.indexOf(cell.categories[k]) != -1)
+								anyUsed = true;
+						}
+
+					if (!anyUsed && filterCategories.length > 0)
+						unfullRows.push(tr);
+					else {
+						tr.appendChild(td);
+						count++;
+					}
 				}
 			}
+
+			function computeRowWidth(row) {
+				var total = 0;
+				for (var i = 0; i < row.children.length; i++) {
+					var w = row.children[i].getAttribute("width");
+					if (w !== null)
+						total += parseInt(w);
+				}
+				return total;
+			}
+
+			while (unfullRows.length > 0) {
+				var first = unfullRows[0];
+				var len = computeRowWidth(first);
+				for (var i = 1; i < unfullRows.length; i++) {
+					var other = computeRowWidth(unfullRows[i]);
+					if (len + other <= 4) {
+						for (var j = 0; j < unfullRows[i].children.length; j++)
+							first.appendChild(unfullRows[i].children[j]);
+						try { div.removeChild(unfullRows[i]); } catch (e) { }
+						unfullRows.splice(i, 1);
+						if (len + other == 4)
+							break;
+						else
+							continue;
+					}
+				}
+				unfullRows.splice(0, 1);
+			}
+
+			categories.then(function (data) {
+				for (var i = data.length - 1; i >= 0; i--)
+					if (usedCategories.indexOf(data[i].id) == -1)
+						data.splice(i, 1);
+
+				data.sort(function (a, b) {
+					return a.id - b.id;
+				});
+
+				while (settings.hasChildNodes())
+					settings.removeChild(settings.lastChild);
+
+				for (var i = 0; i < data.length; i++) {
+					var item = createFilterItem(data[i].icon.url, data[i].title, filterCategories.indexOf(data[i].id) != -1,
+						function (active) {
+							var id = parseInt(this.getAttribute("data-id"));
+
+							var index = filterCategories.indexOf(id);
+							while (index != -1) {
+								filterCategories.splice(index, 1);
+								index = filterCategories.indexOf(id);
+							}
+							if (active)
+								filterCategories.push(id);
+
+							updateFilters();
+						});
+					item.setAttribute("data-id", data[i].id);
+					// app doesn't color the text, idk what it does with the color
+					// item.style.color = "#" + data[i].color.substr(0, 6);
+					settings.appendChild(item);
+				}
+			});
+
+			return {
+				items: flattend,
+				count: count,
+				categories: usedCategories
+			};
 		});
 	},
 	onClickPromo: function (event, pointer, cellElement, cellIndex) {
@@ -805,6 +1007,36 @@ function renderPromo(div, promo) {
 	}
 }
 
+function createFilterItem(imgUrl, label, initial, onToggle) {
+	var item = document.createElement("div");
+	item.className = "item";
+
+	if (imgUrl) {
+		var img = document.createElement("img");
+		img.src = imgUrl;
+		item.appendChild(img);
+	}
+
+	var text = document.createElement("span");
+	text.className = "title";
+	text.textContent = label;
+	item.appendChild(text);
+
+	var check = document.createElement("i");
+	check.className = "checkbox mdi mdi-check";
+	check.style.display = initial ? "" : "none";
+	item.appendChild(check);
+
+	item.onclick = function () {
+		var checkbox = this.querySelector(".checkbox");
+		var active = checkbox.style.display != "none";
+		active = !active;
+		checkbox.style.display = active ? "" : "none";
+		onToggle.call(this, active);
+	};
+	return item;
+}
+
 var tiles = document.querySelectorAll(".tile");
 for (var i = 0; i < tiles.length; i++)
 	tiles[i].addEventListener("click", function () {
@@ -868,6 +1100,31 @@ var likes = {
 			}
 		}
 		return ids;
+	}
+};
+
+var meta = {
+	data: null,
+	required: ["productCategories"],
+	getData: function () {
+		if (this.data)
+			return Promise.resolve(this.data);
+		else {
+			var self = this;
+			return api.getFlags(this.required).then(function (data) {
+				self.data = data;
+				return data;
+			});
+		}
+	},
+	/**
+	 * @returns {Promise<{ id: number, image: { url: string }, title: string, color: string, icon: { url: string } }[]>}
+	 */
+	getProductCategories: function () {
+		return this.getData().then(function (data) {
+			// duplicate data
+			return JSON.parse(JSON.stringify(data["productCategories"]));
+		});
 	}
 };
 

@@ -25,4 +25,10 @@ var api = {
 			url += "limit=" + encodeURIComponent(limit) + "&";
 		return fetch(url).then(function (response) { return response.json(); });
 	},
+	getFlags: function (flags, onlyActive) {
+		var url = "/api/flags?flags=" + encodeURIComponent(JSON.stringify(flags));
+		if (onlyActive !== undefined)
+			url += "onlyActive=" + encodeURIComponent(onlyActive ? "true" : "false") + "&";
+		return fetch(url).then(function (response) { return response.json(); });
+	},
 };

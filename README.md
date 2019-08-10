@@ -10,6 +10,26 @@ This project is heavily inspired by [Slurger](https://github.com/max1220/slurger
 
 The web-facing part is licensed GPLv3. Server and other parts are licensed under the MIT license. See [LICENSE.md](LICENSE.md) for more information.
 
+Extra features:
+
+- more pretty coupons page: there will almost never be any gaps between coupons, no matter how you sort
+- more coupon filters (view historical coupons)
+- shows coupon count
+
+Planned/TODO:
+
+- basket mode for quickly scanning multiple coupons
+- coupon search
+- product list
+- offline API emulation (service worker)
+- show products in promotions
+- web view tile
+- king finder tile
+- delivery tile
+- link tile
+- ingredient list
+- allergen list
+
 ## Running
 
 There is an existing online instance deployed on [https://wurgerking.wfr.moe/](https://wurgerking.wfr.moe/).

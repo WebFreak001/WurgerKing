@@ -2,6 +2,7 @@ import vibe.vibe;
 
 import api.common;
 import api.public_.impl;
+import api.v2.flags;
 import api.v2.promos;
 import api.v3.tiles;
 import api.v4.coupons;
@@ -49,10 +50,13 @@ void main()
 			tile.cacheTile();
 		updateCoupons();
 		updatePromos();
+
+		fetchFlags(db);
 	});
 
 	setTimer(80.minutes, { updateCoupons(); }, true);
 	setTimer(130.minutes, { updatePromos(); }, true);
+	setTimer(2.days, { fetchFlags(db); }, true);
 
 	runApplication();
 }
