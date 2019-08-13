@@ -1,4 +1,4 @@
-const targetCache = "v3.0.1";
+const targetCache = "v3.1";
 const allowedCaches = [targetCache, "static-v1"];
 
 self.addEventListener('install', function (event) {
@@ -8,6 +8,16 @@ self.addEventListener('install', function (event) {
 		caches.open(targetCache).then(function (cache) {
 			return cache.addAll([
 				'/',
+				'/bg_BG',
+				'/cs_CZ',
+				'/de_AT',
+				'/de_CH',
+				'/de_DE',
+				'/fi_FI',
+				'/fr_CH',
+				'/it_CH',
+				'/nl_NL',
+				'/sv_SE',
 				'/manifest.json',
 				'/fonts/materialdesignicons-webfont.eot',
 				'/fonts/materialdesignicons-webfont.svg',

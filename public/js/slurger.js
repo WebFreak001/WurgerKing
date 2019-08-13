@@ -1001,15 +1001,15 @@ var pages = {
 					console.log("selected language " + id);
 					if (id == null)
 						return false;
-					document.cookie = "bkregion=" + id;
-					window.location.reload();
+					window.localStorage.setItem("language", id);
+					window.location.href = "/" + id;
 				});
 				item.setAttribute("data", lang.id);
 				itemsContainer.appendChild(item);
 			}
 			itemsContainer.appendChild(createFilterItem(undefined, "Reset (Browser Language)", false, function () {
-				document.cookie = "bkregion=; Max-Age=-999999;";
-				window.location.reload();
+				window.localStorage.removeItem("language");
+				window.location.href = "/";
 			}));
 		});
 	}
@@ -1319,4 +1319,10 @@ function translate() {
 		}
 		return val;
 	});
+}
+
+if (!window.location.pathname || window.location.pathname == "/") {
+	var targetLanguage = window.localStorage.getItem("language");
+	if (targetLanguage != language)
+		window.location.href = "/" + targetLanguage;
 }

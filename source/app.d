@@ -51,6 +51,7 @@ void main()
 		createDirectory("public/cache");
 
 	router.get("/", &index);
+	router.get("*", &indexLanguage);
 	HTTPFileServerSettings cacheSettings = new HTTPFileServerSettings("/cache");
 	cacheSettings.maxAge = 365.days;
 	router.get("/cache/*", serveStaticFiles("public/cache", cacheSettings));
@@ -89,13 +90,22 @@ struct TranslationContext
 	mixin translationModule!"texts";
 }
 
+void indexLanguage(HTTPServerRequest req, HTTPServerResponse res)
+{
+	if (req.path.length == 6 && req.path[3] == '_')
+	{
+		req.headers.addField("X-Region", req.path[1 .. $]);
+		index(req, res);
+	}
+}
+
 void index(HTTPServerRequest req, HTTPServerResponse res)
 {
 	string region = req.query.get("region");
 	if (!region.length)
 		region = req.headers.get("X-Region");
 	if (!region.length)
-		region = req.cookies.get("bkregion");
+		region = req.params.get("language");
 	if (!region.length)
 		region = determineLanguageByHeader(req, regionLanguages);
 
