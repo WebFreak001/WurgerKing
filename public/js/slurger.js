@@ -1323,6 +1323,6 @@ function translate() {
 
 if (!window.location.pathname || window.location.pathname == "/") {
 	var targetLanguage = window.localStorage.getItem("language");
-	if (targetLanguage != language)
+	if (targetLanguage && language && targetLanguage != language)
 		window.location.href = "/" + targetLanguage;
 }
