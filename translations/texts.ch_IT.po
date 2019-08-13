@@ -1,0 +1,59 @@
+msgid "asset_language"
+msgstr "it"
+
+msgid "hello"
+msgstr "Ciao, %s!"
+
+msgid "page_coupons"
+msgstr "i tuoi coupon"
+
+msgid "share"
+msgstr "Il paradiso dei coupon.\n%s per %s\n"
+
+msgid "coupon_restaurants"
+msgstr "Ristoranti aderenti"
+
+msgid "redeembtn"
+msgstr "Riscatta"
+
+msgid "redeembtn_close"
+msgstr "Pronto"
+
+msgid "coupon_top_title"
+msgstr "Mostra il codice alla cassa"
+
+msgid "switch_to_ean"
+msgstr "EAN-Code"
+
+msgid "switch_to_qr"
+msgstr "QR-Code"
+
+msgid "filter_title"
+msgstr "Filtro"
+
+msgid "reset_filter"
+msgstr "reset"
+
+msgid "apply_filter"
+msgstr "chiudi"
+
+msgid "promo_share"
+msgstr "Noi portiamo le novità. Tu porta l’appetito.\n"
+
+msgid "page_country"
+msgstr "Selezione del paese"
+
+msgid "page_country_subtitle"
+msgstr "Diverse lingue. Stesso gusto."
+
+msgid "ex_filter_inactive"
+msgstr "Rivelare scaduto"
+
+msgid "ex_name_prompt"
+msgstr "Inserisci un nuovo nome:"
+
+msgid "ex_add_to_homescreen"
+msgstr "Aggiungere alla schermata Home"
+
+msgid "ex_add_to_homescreen_cancel"
+msgstr "Annulla"

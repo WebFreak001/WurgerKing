@@ -1,8 +1,10 @@
 # Würger King
 
-A free and open source cross-platform proxy server & web UI for the Burger King Germany app.
+An unofficial free and open source cross-platform proxy server & web UI for the Burger King app in Czech Republic, Germany, Netherlands, Austria, Switzerland, Finland, Sweden and Bulgaria.
 
 This app can be used on old smartphones and unsupported operating systems and offers near full functionality for promotions and coupons.
+
+The app is not affiliated with Burger King in any way and usage is not allowed in any way not allowed by the terms of the Burger King (Germany) app.
 
 It is designed to be fast and lightweight and only required a browser to function.
 
@@ -45,6 +47,23 @@ dub
 to build & run the app. You can access it on `http://127.0.0.1:3000` (accessible over local network) afterwards.
 
 To not be accessible over the local network, change the `bindAddresses` occurence in `source/app.d` to `["::1", "127.0.0.1"]`
+
+## Updates
+
+If you are on commit cf69782 or before you should run
+```
+use wurgerking
+db.coupons.update({}, {$set:{_region:"de/de"}}, false, true)
+db.promos.update({}, {$set:{_region:"de/de"}}, false, true)
+db.flags_.update({}, {$set:{_region:"de/de"}}, false, true)
+db.flags_allergens.update({}, {$set:{_region:"de/de"}}, false, true)
+db.flags_ingredients.update({}, {$set:{_region:"de/de"}}, false, true)
+db.flags_productCategories.update({}, {$set:{_region:"de/de"}}, false, true)
+db.flags_storeCategories.update({}, {$set:{_region:"de/de"}}, false, true)
+db.promos.dropIndex("id_1")
+db.coupons.dropIndex("id_1")
+```
+in your mongodb database to update old entries. Otherwise all old data will be ignored and new data identical will be cached.
 
 ---
 

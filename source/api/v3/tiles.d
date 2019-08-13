@@ -37,10 +37,10 @@ struct Tile
 	Json data;
 }
 
-Tile[] getBKTiles()
+Tile[] getBKTiles(string region)
 {
 	auto ret = requestBK!(Tile[])(
-			URL("https://api.burgerking.de/api/o2uvrPdUY57J5WwYs6NtzZ2Knk7TnAUY/v3/de/de/tiles/"),
+			URL("https://api.burgerking.de/api/o2uvrPdUY57J5WwYs6NtzZ2Knk7TnAUY/v3" ~ region ~ "tiles/"),
 			6.hours);
 	foreach (ref item; ret)
 		if (item.type == "menuPromo")

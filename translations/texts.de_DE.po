@@ -1,0 +1,59 @@
+msgid "asset_language"
+msgstr "de"
+
+msgid "hello"
+msgstr "Hallo, %s!"
+
+msgid "page_coupons"
+msgstr "Deine Coupons"
+
+msgid "share"
+msgstr "Gutscheine statt Geldscheine.\n%s für %s\n"
+
+msgid "coupon_restaurants"
+msgstr "Teilnehmende Restaurants"
+
+msgid "redeembtn"
+msgstr "Einlösen"
+
+msgid "redeembtn_close"
+msgstr "Fertig"
+
+msgid "coupon_top_title"
+msgstr "Bitte Code an der Kasse vorzeigen"
+
+msgid "switch_to_ean"
+msgstr "Zu EAN-Code wechseln"
+
+msgid "switch_to_qr"
+msgstr "Zu QR-Code wechseln"
+
+msgid "filter_title"
+msgstr "Filter"
+
+msgid "reset_filter"
+msgstr "zurücksetzen"
+
+msgid "apply_filter"
+msgstr "anwenden"
+
+msgid "promo_share"
+msgstr "Wir haben die News. Du hast den Hunger.\n"
+
+msgid "page_country"
+msgstr "Länderauswahl"
+
+msgid "page_country_subtitle"
+msgstr "Verschiedene Sprachen. Gleicher Geschmack."
+
+msgid "ex_filter_inactive"
+msgstr "Versteckte/Abgelaufene Anzeigen"
+
+msgid "ex_name_prompt"
+msgstr "Neuen Namen eingeben:"
+
+msgid "ex_add_to_homescreen"
+msgstr "Zum Startbildschirm hinzufügen"
+
+msgid "ex_add_to_homescreen_cancel"
+msgstr "Abbrechen"

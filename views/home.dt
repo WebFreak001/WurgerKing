@@ -4,7 +4,7 @@ block content
 	.triple.home
 		header.wonky-bottom.branded
 			img(src="/img/profile.png")
-			.profile Hallo, #[span.username Jan]!
+			.profile.hello Hallo, Jan!
 		main.grid
 			- import api.cache;
 			- import std.conv;
@@ -22,7 +22,7 @@ block content
 										img(src=proxyImage(image.url))
 		footer
 			.info
-			.flag
+			.flag(class="flag-#{region[1 .. 3]}")
 			.filler
 			.refresh.mdi.mdi-refresh
 	footer.bottombar.hidden

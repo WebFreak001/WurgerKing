@@ -1,5 +1,9 @@
 var autoNavigate = false;
 
+var ignoredPromos = [
+	11087 // multi language update
+];
+
 function clickTile(tile) {
 	var type = tile.getAttribute("data-type");
 	console.log("click " + type)
@@ -36,14 +40,19 @@ function getUsername() {
 
 function updateUsernames() {
 	var usernames = document.querySelectorAll(".username");
+	var hellos = document.querySelectorAll(".hello");
 	var name = getUsername();
 	for (var i = 0; i < usernames.length; i++) {
 		usernames[i].textContent = name;
 	}
+	var hello = translate(translations.hello, name);
+	for (var i = 0; i < hellos.length; i++) {
+		hellos[i].textContent = hello;
+	}
 }
 
 function changeUsername() {
-	var newName = prompt("Neuen Namen eingeben:", getUsername());
+	var newName = prompt(translations.ex_name_prompt, getUsername());
 	if (!newName)
 		return;
 	window.localStorage.setItem("username", newName);
@@ -204,6 +213,9 @@ var pages = {
 			var items = JSON.parse(promos.getAttribute("data-json")).promos;
 
 			for (var i = 0; i < items.length; i++) {
+				if (items[i].promoId && ignoredPromos.indexOf(items[i].promoId) != -1)
+					continue;
+
 				var promo = document.createElement("div");
 				promo.setAttribute("data-json", JSON.stringify(items[i]));
 				promo.className = "carousel-cell promo";
@@ -221,10 +233,11 @@ var pages = {
 		updateUsernames();
 
 		document.querySelector(".home > header").addEventListener("dblclick", changeUsername);
+		document.querySelector(".home > footer > .flag").addEventListener("click", pages.changeLanguage);
 	},
 	openCoupons: function (tile) {
 		var subtitle = new Image();
-		subtitle.src = "/img/subtitle_coupons.png";
+		subtitle.src = "/img/subtitle_coupons_" + translations.asset_language + ".png";
 
 		var showInactive = false;
 		var filterLikes = false;
@@ -244,12 +257,12 @@ var pages = {
 		var header = document.createElement("div");
 		header.className = "header";
 		var title = document.createElement("h4");
-		title.textContent = "Filter";
+		title.textContent = translations.filter_title;
 		header.appendChild(title);
 
 		var resetButton = document.createElement("div");
 		resetButton.className = "reset";
-		resetButton.textContent = "zurücksetzen";
+		resetButton.textContent = translations.reset_filter;
 		header.appendChild(resetButton);
 
 		var filler = document.createElement("div");
@@ -258,7 +271,7 @@ var pages = {
 
 		var applyButton = document.createElement("div");
 		applyButton.className = "apply";
-		applyButton.textContent = "anwenden";
+		applyButton.textContent = translations.apply_filter;
 		header.appendChild(applyButton);
 
 		settings.appendChild(header);
@@ -321,16 +334,17 @@ var pages = {
 
 		applyButton.onclick = closeFilters;
 
-		var inactiveToggle = createFilterItem(undefined, "Versteckte/Abgelaufene Anzeigen", showInactive, function (active) {
+		var inactiveToggle = createFilterItem(undefined, translations.ex_filter_inactive, showInactive, function (active) {
 			showInactive = active;
 			refreshItems();
 		});
 		itemsContainer.appendChild(inactiveToggle);
 
-		var div = this.openTitledGeneric("coupontiles", tile, "Deine Coupons", true, undefined, function () {
+		var div = this.openTitledGeneric("coupontiles", tile, translations.page_coupons, true, undefined, function () {
 			var title = div.parentElement.querySelector(".title");
 			var img = document.createElement("img");
 			img.classList.add("subtitle");
+			img.style.marginBottom = "-" + parseFloat(translations.subtitle_offset || "0") * 0.3 + "px";
 			img.src = subtitle.src;
 			title.appendChild(img);
 
@@ -408,12 +422,12 @@ var pages = {
 			qr.style.opacity = "0";
 
 			var flag = document.createElement("div");
-			flag.className = "flag";
+			flag.className = "flag flag-" + region.substr(0, 2);
 			qr.appendChild(flag);
 
 			var topLabel = document.createElement("p");
 			topLabel.className = "toplabel";
-			topLabel.textContent = "Bitte Code an der Kasse vorzeigen";
+			topLabel.textContent = translations.coupon_top_title;
 			qr.appendChild(topLabel);
 
 			var code = document.createElement("div");
@@ -688,11 +702,11 @@ var pages = {
 
 			var bottomLabel = document.createElement("p");
 			bottomLabel.className = "bottomlabel";
-			bottomLabel.textContent = "Zu EAN-Code wechseln";
+			bottomLabel.textContent = translations.switch_to_ean;
 			qr.appendChild(bottomLabel);
 			bottomLabel.addEventListener("click", function () {
 				mode = mode == "QR" ? "EAN-13" : "QR";
-				bottomLabel.textContent = "Zu " + (mode == "QR" ? "EAN-Code" : "QR-Code") + " wechseln";
+				bottomLabel.textContent = mode == "QR" ? translations.switch_to_ean : translations.switch_to_qr;
 				reinitCanvas();
 			});
 
@@ -700,7 +714,7 @@ var pages = {
 
 			var redeem = document.createElement("div");
 			redeem.className = "redeembtn";
-			redeem.textContent = "Einlösen";
+			redeem.textContent = translations.redeembtn;
 			div.appendChild(redeem);
 
 			redeem.addEventListener("click", function () {
@@ -716,12 +730,14 @@ var pages = {
 							redraw();
 						}, 300);
 					}, 50);
+					redeem.textContent = translations.redeembtn;
 				} else {
 					qr.style.opacity = "0";
 					qr.style.display = "none";
 					if (context)
 						context.clearRect(0, 0, canvasWidth, canvasHeight);
 					context = null;
+					redeem.textContent = translations.redeembtn_close;
 				}
 			});
 
@@ -745,7 +761,7 @@ var pages = {
 			infos.appendChild(price);
 
 			var extra = document.createElement("h4");
-			extra.textContent = "Teilnehmende Restaurants";
+			extra.textContent = translations.coupon_restaurants;
 			infos.appendChild(extra);
 
 			container.appendChild(infos);
@@ -770,7 +786,7 @@ var pages = {
 					callback: function () {
 						if (navigator.share) {
 							navigator.share({
-								text: "Gutscheine statt Geldscheine.\n" + data.title + " für " + data.price + "\n",
+								text: translate(translations.share, data.title, data.price),
 								url: "burgerking://coupons/" + data.id
 							})
 						}
@@ -926,6 +942,9 @@ var pages = {
 
 				var targetIndex;
 				for (var i = 0; i < promos.length; i++) {
+					if (promos[i].id && ignoredPromos.indexOf(promos[i].id) != -1)
+						continue;
+
 					var cell = document.createElement("div");
 					cell.className = "carousel-cell promo";
 					renderPromo(cell, promos[i]);
@@ -955,13 +974,44 @@ var pages = {
 					callback: function () {
 						if (navigator.share) {
 							navigator.share({
-								text: "Wir haben die News. Du hast den Hunger.\n", // <-- WTF burger king
+								text: translations.promo_share,
 								url: "burgerking://promos/" + activePromo
 							})
 						}
 					}
 				}
 			]);
+	},
+	changeLanguage: function (event) {
+		var div = pages.openTitledGeneric("countrysel", undefined, translations.page_country, true, undefined, function () {
+			var title = div.parentElement.querySelector(".title");
+			var subtitle = document.createElement("p");
+			subtitle.textContent = translations.page_country_subtitle;
+			title.appendChild(subtitle);
+
+			var itemsContainer = document.createElement("div");
+			itemsContainer.className = "items";
+			div.appendChild(itemsContainer);
+			for (var i = 0; i < availableLanguages.length; i++) {
+				var lang = availableLanguages[i];
+				var item = createFilterItem(".flag.flag-" + lang.id.substr(0, 2), lang.name, lang.id == language, function (active) {
+					if (!active)
+						return false;
+					var id = this.getAttribute("data");
+					console.log("selected language " + id);
+					if (id == null)
+						return false;
+					document.cookie = "bkregion=" + id;
+					window.location.reload();
+				});
+				item.setAttribute("data", lang.id);
+				itemsContainer.appendChild(item);
+			}
+			itemsContainer.appendChild(createFilterItem(undefined, "Reset (Browser Language)", false, function () {
+				document.cookie = "bkregion=; Max-Age=-999999;";
+				window.location.reload();
+			}));
+		});
 	}
 };
 
@@ -1035,7 +1085,11 @@ function createFilterItem(imgUrl, label, initial, onToggle) {
 	var item = document.createElement("div");
 	item.className = "item";
 
-	if (imgUrl) {
+	if (typeof imgUrl == "string" && imgUrl.startsWith(".")) {
+		var img = document.createElement("div");
+		img.className = "icon" + imgUrl.replace(/\./g, " ");
+		item.appendChild(img);
+	} else if (typeof imgUrl == "string") {
 		var img = document.createElement("img");
 		img.src = imgUrl;
 		item.appendChild(img);
@@ -1051,12 +1105,18 @@ function createFilterItem(imgUrl, label, initial, onToggle) {
 	check.style.display = initial ? "" : "none";
 	item.appendChild(check);
 
+	function toggleDisplay(checkbox, active) {
+		checkbox.style.display = active ? "" : "none";
+	}
+
 	item.onclick = function () {
 		var checkbox = this.querySelector(".checkbox");
 		var active = checkbox.style.display != "none";
 		active = !active;
-		checkbox.style.display = active ? "" : "none";
-		onToggle.call(this, active);
+		toggleDisplay(checkbox, active);
+		if (onToggle.call(this, active) === false) {
+			toggleDisplay(checkbox, !active);
+		}
 	};
 	return item;
 }
@@ -1213,7 +1273,7 @@ window.addEventListener("beforeinstallprompt", function (e) {
 	banner.style.backgroundColor = "#ffffff";
 
 	var install = document.createElement("button");
-	install.textContent = "Add to homescreen";
+	install.textContent = translations.ex_add_to_homescreen;
 	install.onclick = function () {
 		e.prompt();
 		banner.parentElement.removeChild(banner);
@@ -1221,7 +1281,7 @@ window.addEventListener("beforeinstallprompt", function (e) {
 	banner.appendChild(install);
 
 	var cancel = document.createElement("button");
-	cancel.textContent = "Cancel";
+	cancel.textContent = translations.ex_add_to_homescreen_cancel;
 	cancel.onclick = function () {
 		banner.parentElement.removeChild(banner);
 	};
@@ -1233,3 +1293,30 @@ window.addEventListener("beforeinstallprompt", function (e) {
 document.querySelector(".home footer .refresh").addEventListener("click", function () {
 	window.location.reload();
 });
+
+// https://stackoverflow.com/a/4795914/2104229
+function translate() {
+	var args = arguments,
+		string = args[0],
+		i = 1;
+	return string.replace(/%((%)|s|d)/g, function (m) {
+		// m is the matched format, e.g. %s, %d
+		var val = null;
+		if (m[2]) {
+			val = m[2];
+		} else {
+			val = args[i];
+			// A switch statement so that the formatter can be extended. Default is %s
+			switch (m) {
+				case '%d':
+					val = parseFloat(val);
+					if (isNaN(val)) {
+						val = 0;
+					}
+					break;
+			}
+			i++;
+		}
+		return val;
+	});
+}

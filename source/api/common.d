@@ -9,7 +9,24 @@ import core.time;
 import std.algorithm;
 import std.array;
 import std.range;
+import std.string;
 import std.typecons;
+
+static immutable string[] bkRegions = [
+	"/cz/cs/", "/de/de/", "/nl/nl/", "/at/de/", "/ch/de/", "/ch/fr/", "/ch/it/",
+	"/fi/fi/", "/se/sv/", "/bg/bg/"
+];
+static immutable string defaultBkRegion = bkRegions[1];
+
+// de_DE, nl_NL, etc
+static immutable string[] regionLanguages = bkRegions.map!(
+		a => a[1 .. 3] ~ '_' ~ a[4 .. 6].toUpper).array;
+
+static immutable string[] regionNames = [
+	"Česká republika", "Deutschland", "Nederland", "Österreich", "Schweiz",
+	"Suisse", "Svizzera", "Suomi", "Sverige", "България"
+];
+static assert(regionNames.length == regionLanguages.length);
 
 struct Images
 {
@@ -214,25 +231,60 @@ unittest
 	assert(rows.empty);
 }
 
-mixin template GenericCachable(T, int apiVersion, int subApiVersion, string endpoint, Duration ttl)
+string normalizeRegion(string region)
+{
+	if (region.length)
+	{
+		if (!region.startsWith("/"))
+			region = "/" ~ region;
+		if (!region.endsWith("/"))
+			region = region ~ "/";
+	}
+	return region;
+}
+
+mixin template GenericCachable(T, int apiVersion, int subApiVersion,
+		string endpoint, Duration ttl, bool localizable = true)
 {
 	enum bkApiVersion = apiVersion;
 	enum bkSubApiVersion = subApiVersion;
 
-	Json[] getBKAPI()
+	Json[] getBKAPI(string region)
 	{
-		return requestBK!(Json[])(URL(endpoint), ttl);
+		if (region.length)
+			return requestBK!(Json[])(URL(endpoint.replace("/de/de/", region)), ttl);
+		else
+			return requestBK!(Json[])(URL(endpoint), ttl);
 	}
 
 	void updateItems()
 	{
+		static if (localizable)
+		{
+			foreach (region; bkRegions)
+				updateItems(region);
+		}
+		else
+		{
+			updateItems(null);
+		}
+	}
+
+	void updateItems(string region)
+	{
 		import vibe.data.bson : Bson;
 		import vibe.data.json : Json;
+		import vibe.core.log : logInfo;
 
-		auto items = getBKAPI();
+		region = region.normalizeRegion;
+
+		logInfo("Updating " ~ T.stringof ~ " items for region %s", region);
+		auto items = getBKAPI(region);
 		auto ids = items.map!(a => Bson(a["id"].get!int)).array;
-		T.collection.update(["id": Bson(["$nin": Bson(ids)]),
-				"_active": Bson(true)], [
+		auto query = ["id" : Bson(["$nin": Bson(ids)]), "_active" : Bson(true)];
+		if (region.length)
+			query["_region"] = Bson(region);
+		T.collection.update(query, [
 				"$set": ["_active": Bson(false), "_order": Bson(1000)],
 				], UpdateFlags.multiUpdate);
 		foreach (i, item; items)
@@ -241,7 +293,10 @@ mixin template GenericCachable(T, int apiVersion, int subApiVersion, string endp
 			item["_apiVer"] = Json(cast(int) apiVersion);
 			item["_subApiVer"] = Json(cast(int) subApiVersion);
 			item["_active"] = Json(true);
-			T.collection.update(["id": cast(long) item["id"].get!int], item, UpdateFlags.upsert);
+			if (region.length)
+				item["_region"] = Json(region[1 .. $ - 1]);
+			T.collection.update(["id": item["id"], "_region": item["_region"]], item, UpdateFlags.upsert);
 		}
+		logInfo("Upserted %s items for region %s", items.length, region);
 	}
 }

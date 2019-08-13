@@ -30,7 +30,6 @@ mixin GenericCachable!(Promo, 2, 0,
 		"https://api.burgerking.de/api/o2uvrPdUY57J5WwYs6NtzZ2Knk7TnAUY/v2/de/de/promos/", 120.minutes) promoApi;
 
 enum promoApiVersion = promoApi.bkApiVersion;
-alias getBKPromos = promoApi.getBKAPI;
 alias updatePromos = promoApi.updateItems;
 
 void cachePromo(Promo item)

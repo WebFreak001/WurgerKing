@@ -201,9 +201,42 @@ body {
 	background-size: cover;
 }
 
-.home footer > .flag, .qrcode .flag {
-	background: url('/img/flag_de.png') no-repeat center center;
-	background-size: cover;
+.flag {
+	background: url('/img/flags.png') no-repeat center center;
+	background-size: 900% 100%;
+	background-position: 0 0;
+}
+
+.flag.flag-cz {
+	background-position-x: 0;
+}
+
+.flag.flag-de {
+	background-position-x: 12.5%;
+}
+
+.flag.flag-nl {
+	background-position-x: 25%;
+}
+
+.flag.flag-at {
+	background-position-x: 37.5%;
+}
+
+.flag.flag-ch {
+	background-position-x: 50%;
+}
+
+.flag.flag-fi {
+	background-position-x: 62.5%;
+}
+
+.flag.flag-se {
+	background-position-x: 75%;
+}
+
+.flag.flag-bg {
+	background-position-x: 87.5%;
 }
 
 .home header > img {
@@ -253,12 +286,19 @@ body {
 	font-weight: normal;
 }
 
-.highlit-panel p.description, .bigtile .qrcode .toplabel, .bigtile .qrcode .bottomlabel, .htmlview, .filter-settings {
+.highlit-panel p.description, .bigtile .qrcode .toplabel, .bigtile .qrcode .bottomlabel, .htmlview, .filter-settings,
+.subpage.countrysel, .titled > .title > p {
 	font-family: 'Overpass', 'Open Sans', Roboto, Arial, sans-serif;
 }
 
 .titled > .title {
-	padding: 0.8em 0.35em 0.7em;
+	padding: 0.7em 0.35em 0.8em;
+}
+
+.titled > .title > p {
+	margin: 0;
+	font-size: 1rem;
+	padding-bottom: 0.8rem;
 }
 
 .titled > .title.loading {
@@ -275,9 +315,11 @@ body {
 
 .titled > .title > img.subtitle {
 	position: absolute;
-	bottom: 0.25em;
+	bottom: 0.35em;
 	left: 0.35em;
-	height: 0.82em;
+	transform-origin: bottom left;
+	/* adjust scale with slurger.js offset */
+	transform: scale(0.3);
 }
 
 footer.bottombar {
@@ -530,10 +572,13 @@ footer.bottombar .right .action .badge {
 
 .filter-settings .items {
 	max-height: 60vh;
+}
+
+.items {
 	overflow-y: auto;
 }
 
-.filter-settings .item {
+.items .item {
 	border-top: 1px solid rgba(0, 0, 0, 0.1);
 	padding: 1rem;
 	font-size: 0.9rem;
@@ -542,7 +587,7 @@ footer.bottombar .right .action .badge {
 	justify-content: flex-start;
 }
 
-.filter-settings .item img {
+.items .item img, .items .item .icon {
 	flex-grow: 0;
 	flex-shrink: 0;
 	height: 1.8rem;
@@ -550,7 +595,7 @@ footer.bottombar .right .action .badge {
 	margin-right: 1rem;
 }
 
-.filter-settings .item .title {
+.items .item .title {
 	flex-grow: 1;
 }
 

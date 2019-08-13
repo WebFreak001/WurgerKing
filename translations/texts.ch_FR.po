@@ -1,0 +1,59 @@
+msgid "asset_language"
+msgstr "fr"
+
+msgid "hello"
+msgstr "Bonjour, %s!"
+
+msgid "page_coupons"
+msgstr "Vos Coupons"
+
+msgid "share"
+msgstr "Paradis de bons.\n%s pour %s\n"
+
+msgid "coupon_restaurants"
+msgstr "Restaurants Participants"
+
+msgid "redeembtn"
+msgstr "Valider"
+
+msgid "redeembtn_close"
+msgstr "Prête"
+
+msgid "coupon_top_title"
+msgstr "Veuillez présenter le code à la caisse"
+
+msgid "switch_to_ean"
+msgstr "EAN-Code"
+
+msgid "switch_to_qr"
+msgstr "QR-Code"
+
+msgid "filter_title"
+msgstr "Filtre"
+
+msgid "reset_filter"
+msgstr "réinitialiser"
+
+msgid "apply_filter"
+msgstr "fermer"
+
+msgid "promo_share"
+msgstr "Nous avons du nouveau. Vous avez faim.\n"
+
+msgid "page_country"
+msgstr "Sélection de pays"
+
+msgid "page_country_subtitle"
+msgstr "Plusieurs langues. Même goût."
+
+msgid "ex_filter_inactive"
+msgstr "Révéler expiré"
+
+msgid "ex_name_prompt"
+msgstr "Entrer un nouveau nom:"
+
+msgid "ex_add_to_homescreen"
+msgstr "Ajouter à l'écran d'accueil"
+
+msgid "ex_add_to_homescreen_cancel"
+msgstr "Annuler"

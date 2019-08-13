@@ -17,9 +17,9 @@ import vibe.db.mongo.cursor;
 
 class PublicAPIImpl : PublicAPI
 {
-	Coupon[][] getCoupons(int[] filterCategories = null, bool onlyActive = true,
-			bool hideExpired = false, int limit = 100, bool allGeo = false,
-			int[] filterIds = null, bool mybk = false) @safe
+	Coupon[][] getCoupons(string region, int[] filterCategories = null,
+			bool onlyActive = true, bool hideExpired = false, int limit = 100,
+			bool allGeo = false, int[] filterIds = null, bool mybk = false) @safe
 	{
 		if (limit < 1)
 			limit = 1;
@@ -27,6 +27,7 @@ class PublicAPIImpl : PublicAPI
 			limit = 100;
 
 		Bson[string] query;
+		query["_region"] = Bson(region);
 		query["_apiVer"] = Bson(couponApiVersion);
 		if (onlyActive)
 			query["_active"] = Bson(true);
@@ -57,7 +58,7 @@ class PublicAPIImpl : PublicAPI
 		}).array.compactRows.byRows.array;
 	}
 
-	Promo[] getPromos(string filterStore = null, bool onlyActive = true, int limit = 100) @safe
+	Promo[] getPromos(string region, string filterStore = null, bool onlyActive = true, int limit = 100) @safe
 	{
 		if (limit < 1)
 			limit = 1;
@@ -65,6 +66,7 @@ class PublicAPIImpl : PublicAPI
 			limit = 100;
 
 		Bson[string] query;
+		query["_region"] = Bson(region);
 		query["_apiVer"] = Bson(promoApiVersion);
 		if (onlyActive)
 			query["_active"] = Bson(true);
@@ -78,9 +80,10 @@ class PublicAPIImpl : PublicAPI
 		}).array;
 	}
 
-	Json[][string] getFlags(string[] flags, bool onlyActive = true)
+	Json[][string] getFlags(string region, string[] flags, bool onlyActive = true)
 	{
 		Bson[string] query;
+		query["_region"] = Bson(region);
 		query["_apiVer"] = Bson(flagsApiVersion);
 		if (onlyActive)
 			query["_active"] = Bson(true);

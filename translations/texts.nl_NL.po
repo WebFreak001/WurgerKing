@@ -1,0 +1,62 @@
+msgid "asset_language"
+msgstr "nl"
+
+msgid "subtitle_offset"
+msgstr "30"
+
+msgid "hello"
+msgstr "Hi, %s!"
+
+msgid "page_coupons"
+msgstr "Jouw Coupons"
+
+msgid "share"
+msgstr "Coupon hemel\n%s voor %s\n"
+
+msgid "coupon_restaurants"
+msgstr "Deelnemende Restaurants"
+
+msgid "redeembtn"
+msgstr "Inwisselen"
+
+msgid "redeembtn_close"
+msgstr "Terug"
+
+msgid "coupon_top_title"
+msgstr "Laat alsjeblieft de code aan de kassa zien."
+
+msgid "switch_to_ean"
+msgstr "EAN-Code"
+
+msgid "switch_to_qr"
+msgstr "QR-Code"
+
+msgid "filter_title"
+msgstr "Filter"
+
+msgid "reset_filter"
+msgstr "reset"
+
+msgid "apply_filter"
+msgstr "sluit"
+
+msgid "promo_share"
+msgstr "Wij hebben iets nieuws, jij hebt honger.\n"
+
+msgid "page_country"
+msgstr "Selecteer jouw land"
+
+msgid "page_country_subtitle"
+msgstr "Meerdere talen. Zelfde smaak."
+
+msgid "ex_filter_inactive"
+msgstr "Show verlopen"
+
+msgid "ex_name_prompt"
+msgstr "Voer een nieuwe naam in:"
+
+msgid "ex_add_to_homescreen"
+msgstr "Toevoegen aan startscherm"
+
+msgid "ex_add_to_homescreen_cancel"
+msgstr "Annuleren"

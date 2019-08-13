@@ -42,7 +42,6 @@ mixin GenericCachable!(Coupon, 4, 1,
 		"https://api.burgerking.de/api/o2uvrPdUY57J5WwYs6NtzZ2Knk7TnAUY/v4/de/de/coupons/", 70.minutes) couponApi;
 
 enum couponApiVersion = couponApi.bkApiVersion;
-alias getBKCoupons = couponApi.getBKAPI;
 alias updateCoupons = couponApi.updateItems;
 
 void cacheCoupon(Coupon coupon)

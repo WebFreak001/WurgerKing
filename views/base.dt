@@ -5,7 +5,7 @@ html(lang="de")
 		- import std.digest.sha;
 		meta(charset="utf-8")
 		meta(name="viewport", content="width=device-width, initial-scale=1")
-		meta(http-equiv="Content-Security-Policy", content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://api.burgerking.de; font-src 'self' https://fonts.gstatic.com; script-src 'self'")
+		meta(http-equiv="Content-Security-Policy", content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://api.burgerking.de; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'nonce-" ~ nonce ~ "'")
 		title Würger King - Web Slurger
 		link(rel="manifest", href="/manifest.json")
 		meta(name="application-name", content="Würger King")
@@ -19,6 +19,7 @@ html(lang="de")
 	body
 		block content
 		block scripts
+			script(nonce=nonce)= translationsScript
 			script(src="/js/api.js")
 			script(src="/js/qr.min.js")
 			script(src="/js/flickity.pkgd.min.js")

@@ -1,4 +1,4 @@
-const targetCache = "v2.9.5";
+const targetCache = "v3.0";
 const allowedCaches = [targetCache, "static-v1"];
 
 self.addEventListener('install', function (event) {
@@ -29,13 +29,20 @@ self.addEventListener('install', function (event) {
 				'/img/bk_logo.svg',
 				'/img/bordermask-bottom.svg',
 				'/img/bordermask.svg',
-				'/img/flag_de.png',
+				'/img/flags.png',
 				'/img/generic_maps.png',
 				'/img/icons.svg',
 				'/img/info.png',
 				'/img/kingfinder.png',
 				'/img/profile.png',
-				'/img/subtitle_coupons.png',
+				'/img/subtitle_coupons_ch_de.png',
+				'/img/subtitle_coupons_cz.png',
+				'/img/subtitle_coupons_de.png',
+				'/img/subtitle_coupons_fi.png',
+				'/img/subtitle_coupons_fr.png',
+				'/img/subtitle_coupons_it.png',
+				'/img/subtitle_coupons_nl.png',
+				'/img/subtitle_coupons_se.png',
 				'/js/api.js',
 				'/js/flickity.pkgd.min.js',
 				'/js/qr.min.js',

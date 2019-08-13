@@ -13,6 +13,7 @@ var api = {
 			url += "allGeo=" + encodeURIComponent(allGeo ? "true" : "false") + "&";
 		if (mybk !== undefined)
 			url += "mybk=" + encodeURIComponent(mybk ? "true" : "false") + "&";
+		url += "region=" + encodeURIComponent(region);
 		return fetch(url).then(function (response) { return response.json(); });
 	},
 	getPromos: function (filterStore, onlyActive, limit) {
@@ -23,12 +24,14 @@ var api = {
 			url += "onlyActive=" + encodeURIComponent(onlyActive ? "true" : "false") + "&";
 		if (limit !== undefined)
 			url += "limit=" + encodeURIComponent(limit) + "&";
+		url += "region=" + encodeURIComponent(region);
 		return fetch(url).then(function (response) { return response.json(); });
 	},
 	getFlags: function (flags, onlyActive) {
-		var url = "/api/flags?flags=" + encodeURIComponent(JSON.stringify(flags));
+		var url = "/api/flags?flags=" + encodeURIComponent(JSON.stringify(flags)) + "&";
 		if (onlyActive !== undefined)
 			url += "onlyActive=" + encodeURIComponent(onlyActive ? "true" : "false") + "&";
+		url += "region=" + encodeURIComponent(region);
 		return fetch(url).then(function (response) { return response.json(); });
 	},
 };

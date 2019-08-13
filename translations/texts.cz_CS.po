@@ -1,0 +1,59 @@
+msgid "asset_language"
+msgstr "cz"
+
+msgid "hello"
+msgstr "Ahoj, %s!"
+
+msgid "page_coupons"
+msgstr "Vaše kupony"
+
+msgid "share"
+msgstr "Slevové nebe.\n%s za %s\n"
+
+msgid "coupon_restaurants"
+msgstr "Participující restaurace"
+
+msgid "redeembtn"
+msgstr "Uplatnit"
+
+msgid "redeembtn_close"
+msgstr "Připraven"
+
+msgid "coupon_top_title"
+msgstr "Prosím, ukažte kód na pokladně"
+
+msgid "switch_to_ean"
+msgstr "EAN-Code"
+
+msgid "switch_to_qr"
+msgstr "QR-Code"
+
+msgid "filter_title"
+msgstr "Filtrovat"
+
+msgid "reset_filter"
+msgstr "Resetovat"
+
+msgid "apply_filter"
+msgstr "Zavřit"
+
+msgid "promo_share"
+msgstr "Promotion.\n"
+
+msgid "page_country"
+msgstr "Vyberte Zemi"
+
+msgid "page_country_subtitle"
+msgstr "Různé jazyky, stejné chutě."
+
+msgid "ex_filter_inactive"
+msgstr "Zobrazit vypršené"
+
+msgid "ex_name_prompt"
+msgstr "Zadejte nové jméno:"
+
+msgid "ex_add_to_homescreen"
+msgstr "Přidat na domácí obrazovku"
+
+msgid "ex_add_to_homescreen_cancel"
+msgstr "Zrušení"

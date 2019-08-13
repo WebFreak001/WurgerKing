@@ -1,0 +1,62 @@
+msgid "asset_language"
+msgstr "se"
+
+msgid "subtitle_offset"
+msgstr "33"
+
+msgid "hello"
+msgstr "Hej, %s!"
+
+msgid "page_coupons"
+msgstr "Dina kuponger"
+
+msgid "share"
+msgstr "Kupongparadiset\n%s för %s\n"
+
+msgid "coupon_restaurants"
+msgstr "Deltagande Restauranger"
+
+msgid "redeembtn"
+msgstr "Lös in"
+
+msgid "redeembtn_close"
+msgstr "Klar"
+
+msgid "coupon_top_title"
+msgstr "Visa koden i kassan"
+
+msgid "switch_to_ean"
+msgstr "EAN-Code"
+
+msgid "switch_to_qr"
+msgstr "QR-Code"
+
+msgid "filter_title"
+msgstr "Filtrera"
+
+msgid "reset_filter"
+msgstr "återställ"
+
+msgid "apply_filter"
+msgstr "Stäng"
+
+msgid "promo_share"
+msgstr "Erbjudanden\n"
+
+msgid "page_country"
+msgstr "Välj land"
+
+msgid "page_country_subtitle"
+msgstr "Olika språk. Samma goda smak."
+
+msgid "ex_filter_inactive"
+msgstr "Visa utgångna/inaktiva"
+
+msgid "ex_name_prompt"
+msgstr "Ange nytt namn:"
+
+msgid "ex_add_to_homescreen"
+msgstr "Lägg till på hemskärmen"
+
+msgid "ex_add_to_homescreen_cancel"
+msgstr "Avbryt"

@@ -2,6 +2,10 @@
 	"dependencies": {
 		"vibe-d": "~>0.8.3"
 	},
+	"stringImportPaths": [
+		"views",
+		"translations"
+	],
 	"name": "bk-webapp",
 	"license": "MIT"
 }

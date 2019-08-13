@@ -1,0 +1,62 @@
+msgid "asset_language"
+msgstr "fi"
+
+msgid "subtitle_offset"
+msgstr "32"
+
+msgid "hello"
+msgstr "Hei %s!"
+
+msgid "page_coupons"
+msgstr "Kuponkisi"
+
+msgid "share"
+msgstr "Alennuskoodi voittaa käteisen\n%s %s:lle\n"
+
+msgid "coupon_restaurants"
+msgstr "Osallistuvat ravintolat"
+
+msgid "redeembtn"
+msgstr "Lunasta"
+
+msgid "redeembtn_close"
+msgstr "Valmis"
+
+msgid "coupon_top_title"
+msgstr "Näytä koodi kassalla"
+
+msgid "switch_to_ean"
+msgstr "EAN-Code"
+
+msgid "switch_to_qr"
+msgstr "QR-Code"
+
+msgid "filter_title"
+msgstr "Suodatin"
+
+msgid "reset_filter"
+msgstr "nollaa"
+
+msgid "apply_filter"
+msgstr "sulje"
+
+msgid "promo_share"
+msgstr "Me tuomme uutiset. Sinä nälkäsi.\n"
+
+msgid "page_country"
+msgstr "Valitse maa"
+
+msgid "page_country_subtitle"
+msgstr "Monia kieliä. Sama maku."
+
+msgid "ex_filter_inactive"
+msgstr "Paljastaa vanhentunut"
+
+msgid "ex_name_prompt"
+msgstr "Kirjoita uusi nimi:"
+
+msgid "ex_add_to_homescreen"
+msgstr "Lisää aloitusnäytölle"
+
+msgid "ex_add_to_homescreen_cancel"
+msgstr "Peruuttaa"

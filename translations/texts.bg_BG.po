@@ -1,0 +1,59 @@
+msgid "asset_language"
+msgstr "bg"
+
+msgid "hello"
+msgstr "Здравейте %s!"
+
+msgid "page_coupons"
+msgstr "Coupons"
+
+msgid "share"
+msgstr "Coupon share.\n%s für %s\n"
+
+msgid "coupon_restaurants"
+msgstr "Participating restaurants"
+
+msgid "redeembtn"
+msgstr "Redeem"
+
+msgid "redeembtn_close"
+msgstr "Close"
+
+msgid "coupon_top_title"
+msgstr "Show code at cash register"
+
+msgid "switch_to_ean"
+msgstr "EAN-Code"
+
+msgid "switch_to_qr"
+msgstr "QR-Code"
+
+msgid "filter_title"
+msgstr "Filter"
+
+msgid "reset_filter"
+msgstr "reset"
+
+msgid "apply_filter"
+msgstr "apply"
+
+msgid "promo_share"
+msgstr "Promotion\n"
+
+msgid "page_country"
+msgstr "Изберете държава"
+
+msgid "page_country_subtitle"
+msgstr "Различни езици. същия вкус."
+
+msgid "ex_filter_inactive"
+msgstr "Reveal expired"
+
+msgid "ex_name_prompt"
+msgstr "Enter new name:"
+
+msgid "ex_add_to_homescreen"
+msgstr "Add to homescreen"
+
+msgid "ex_add_to_homescreen_cancel"
+msgstr "cancel"
