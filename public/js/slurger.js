@@ -994,7 +994,7 @@ var pages = {
 			div.appendChild(itemsContainer);
 			for (var i = 0; i < availableLanguages.length; i++) {
 				var lang = availableLanguages[i];
-				var item = createFilterItem(".flag.flag-" + lang.id.substr(0, 2), lang.name, lang.id == language, function (active) {
+				var item = createFilterItem(".flag.flag-" + lang.id.substr(3, 2).toLowerCase(), lang.name, lang.id == language, function (active) {
 					if (!active)
 						return false;
 					var id = this.getAttribute("data");

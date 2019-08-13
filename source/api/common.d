@@ -18,9 +18,9 @@ static immutable string[] bkRegions = [
 ];
 static immutable string defaultBkRegion = bkRegions[1];
 
-// de_DE, nl_NL, etc
+// de_DE, nl_NL, sv_SE, etc
 static immutable string[] regionLanguages = bkRegions.map!(
-		a => a[1 .. 3] ~ '_' ~ a[4 .. 6].toUpper).array;
+		a => a[4 .. 6] ~ '_' ~ a[1 .. 3].toUpper).array;
 
 static immutable string[] regionNames = [
 	"Česká republika", "Deutschland", "Nederland", "Österreich", "Schweiz",
