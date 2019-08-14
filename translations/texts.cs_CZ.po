@@ -28,6 +28,9 @@ msgstr "EAN-Code"
 msgid "switch_to_qr"
 msgstr "QR-Code"
 
+msgid "switch_to_next"
+msgstr "Change code"
+
 msgid "filter_title"
 msgstr "Filtrovat"
 

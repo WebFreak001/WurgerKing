@@ -440,13 +440,27 @@ var pages = {
 			var context;
 			code.appendChild(canvas);
 			var startFrame, endFrame;
-			var mode = "QR";
+			var modeIndex = 0;
 			var barcode;
 			var bitmap;
 			var bits = [];
 			var dpr = window.devicePixelRatio || 1;
 			var canvasWidth, canvasHeight;
 			var lastFrame = performance.now();
+
+			for (var i = data.barcodes.length - 1; i >= 0; i--) {
+				console.log(data.barcodes[i]);
+				if (!data.barcodes[i].value)
+					data.barcodes.splice(i, 1);
+				else if (data.barcodes[i].type == "QR")
+					modeIndex = i;
+			}
+
+			if (data.myBkOnetime || !data.barcodes.length)
+				data.barcodes.push({
+					"type": "label",
+					"value": data.plu
+				});
 
 			function reinitCanvas() {
 				var rect = qr.getBoundingClientRect();
@@ -459,18 +473,14 @@ var pages = {
 				startFrame = 0;
 				endFrame = 0.15;
 
-				barcode = data.barcodes[0];
-				for (var i = 0; i < data.barcodes.length; i++) {
-					if (data.barcodes[i].type == mode) {
-						barcode = data.barcodes[i];
-						break;
-					}
-				}
+				barcode = data.barcodes[modeIndex];
 
 				context = canvas.getContext("2d");
 				context.imageSmoothingEnabled = false;
 				context.mozImageSmoothingEnabled = false;
 				context.webkitImageSmoothingEnabled = false;
+
+				var mode = barcode.type;
 
 				if (mode == "QR") {
 					bitmap = document.createElement("canvas");
@@ -483,7 +493,7 @@ var pages = {
 						foreground: "#682f1c",
 						level: "L" // L, M, Q, H
 					});
-				} else {
+				} else if (mode == "EAN-13") {
 					var v = barcode.value;
 					if (v.length == 13) {
 						bits = [];
@@ -579,6 +589,8 @@ var pages = {
 				var now = performance.now();
 				var delta = (now - lastFrame) / 16.0;
 				lastFrame = now;
+
+				var mode = barcode.type;
 
 				function animatedRect(w, h) {
 					var speed = w / 3000 * delta;
@@ -685,6 +697,16 @@ var pages = {
 					animatedRect(w, h);
 
 					context.drawImage(bitmap, 3 * s, 2 * s - 1);
+				} else {
+					context.translate((canvasWidth - w * s) / 2, (canvasHeight - h * s) / 2);
+					animatedRect(w, h);
+
+					context.font = (h * (s - 4)) + "px 'Passion One', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif";
+					context.textAlign = "center";
+					context.textBaseline = "middle";
+					context.fillStyle = "#682f1c";
+					context.fillText(barcode.value, w * s / 2, h * s / 2);
+					context.fill();
 				}
 
 				if (requestAnimationFrame)
@@ -696,17 +718,37 @@ var pages = {
 			var codeLabel = document.createElement("div");
 			codeLabel.textContent = data.plu;
 			codeLabel.className = "label";
-			code.appendChild(codeLabel);
+			if (data.myBkOnetime) {
+				// TODO: countdown timer
+			}
+			else if (data.barcodes.length > 1)
+				code.appendChild(codeLabel);
 
 			qr.appendChild(code);
 
 			var bottomLabel = document.createElement("p");
 			bottomLabel.className = "bottomlabel";
-			bottomLabel.textContent = translations.switch_to_ean;
-			qr.appendChild(bottomLabel);
+
+			if (data.barcodes.length == 2
+				&& (data.barcodes[0].type == "QR" && data.barcodes[1].type == "EAN-13"
+					|| data.barcodes[0].type == "EAN-13" && data.barcodes[1].type == "QR")) {
+				bottomLabel.textContent = data.barcodes[modeIndex].type == "QR" ? translations.switch_to_ean : translations.switch_to_qr;
+			} else {
+				bottomLabel.textContent = translations.switch_to_next;
+			}
+
+			console.log(data.barcodes);
+			if (data.barcodes.length > 1)
+				qr.appendChild(bottomLabel);
 			bottomLabel.addEventListener("click", function () {
-				mode = mode == "QR" ? "EAN-13" : "QR";
-				bottomLabel.textContent = mode == "QR" ? translations.switch_to_ean : translations.switch_to_qr;
+				modeIndex = (modeIndex + 1) % data.barcodes.length;
+				if (data.barcodes.length == 2
+					&& (data.barcodes[0].type == "QR" && data.barcodes[1].type == "EAN-13"
+						|| data.barcodes[0].type == "EAN-13" && data.barcodes[1].type == "QR")) {
+					bottomLabel.textContent = data.barcodes[modeIndex].type == "QR" ? translations.switch_to_ean : translations.switch_to_qr;
+				} else {
+					bottomLabel.textContent = translations.switch_to_next;
+				}
 				reinitCanvas();
 			});
 

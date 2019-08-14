@@ -31,6 +31,9 @@ msgstr "Zu EAN-Code wechseln"
 msgid "switch_to_qr"
 msgstr "Zu QR-Code wechseln"
 
+msgid "switch_to_next"
+msgstr "Alternativen Codetyp zeigen"
+
 msgid "filter_title"
 msgstr "Filter"
 
