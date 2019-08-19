@@ -1,4 +1,4 @@
-const targetCache = "v3.1.1";
+const targetCache = "v3.2.0";
 const allowedCaches = [targetCache, "static-v1"];
 
 self.addEventListener('install', function (event) {
@@ -53,10 +53,7 @@ self.addEventListener('install', function (event) {
 				'/img/subtitle_coupons_it.png',
 				'/img/subtitle_coupons_nl.png',
 				'/img/subtitle_coupons_se.png',
-				'/js/api.js',
-				'/js/flickity.pkgd.min.js',
-				'/js/qr.min.js',
-				'/js/slurger.js',
+				'/js/app.js',
 				'/logo/bk192.png',
 				'/logo/bk512.png',
 			]);

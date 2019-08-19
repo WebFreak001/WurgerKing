@@ -20,7 +20,4 @@ html(lang="de")
 		block content
 		block scripts
 			script(nonce=nonce)= translationsScript
-			script(src="/js/api.js")
-			script(src="/js/qr.min.js")
-			script(src="/js/flickity.pkgd.min.js")
-			script(src="/js/slurger.js")
+			script(src="/js/app.js")
