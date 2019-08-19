@@ -405,7 +405,7 @@ footer.bottombar .right .action .badge {
 	letter-spacing: 0;
 }
 
-.subpage.titled, .subpage.coupon {
+.subpage.titled, .subpage.coupons_arg {
 	height: 100vh;
 	display: flex;
 	flex-direction: column;

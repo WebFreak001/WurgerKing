@@ -9,7 +9,9 @@ class Pages {
 		const div = document.createElement("div");
 		this.stack.push({ div: div, withBottomBar: withBottomBar, actions: actions, name: name });
 		window.history.pushState({ name: name }, "", "#" + name);
-		div.className = name + " subpage loading" + (withBottomBar ? " bottomless" : "");
+		const slash = name.lastIndexOf("/");
+		const subname = slash == -1 ? "" : (" " + name.substr(0, slash + 1).replace(/[^a-zA-Z0-9]/g, "_") + "arg");
+		div.className = name.toLowerCase().replace(/[^a-zA-Z0-9]/g, "_") + subname + " subpage loading" + (withBottomBar ? " bottomless" : "");
 		const rect = tile ? tile.getBoundingClientRect() : { x: window.innerWidth / 2 - 50, y: window.innerHeight / 2 - 50, width: 100, height: 100 };
 		div.style.left = ((<any>rect).x || 0) + "px";
 		div.style.top = ((<any>rect).y || 0) + "px";
