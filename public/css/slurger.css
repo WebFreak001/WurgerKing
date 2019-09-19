@@ -97,11 +97,6 @@ body {
 	min-height: 100vh;
 }
 
-.grid {
-	display: flex;
-	flex-direction: column;
-}
-
 .grid > .row {
 	display: flex;
 	flex-direction: row;
