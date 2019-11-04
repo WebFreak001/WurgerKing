@@ -406,6 +406,10 @@ footer.bottombar .right .action .badge {
 	flex-direction: column;
 }
 
+.subpage.coupons_arg > .content {
+	padding-bottom: 128px;
+}
+
 .subpage.bottomless {
 	min-height: unset;
 	height: calc(100vh - 3.2rem);
@@ -449,6 +453,9 @@ footer.bottombar .right .action .badge {
 }
 
 .redeembtn {
+	position: fixed;
+	width: 100%;
+	bottom: 64px;
 	background-color: #f7a600;
 	color: white;
 	height: 60px;
