@@ -561,14 +561,14 @@ Pages.prototype.onClickCoupon = function (this: HTMLElement, event: MouseEvent) 
 						redraw();
 					}, 300);
 				}, 50);
-				redeem.textContent = translations.redeembtn;
+				redeem.textContent = translations.redeembtn_close;
 			} else {
 				qr.style.opacity = "0";
 				qr.style.display = "none";
 				if (context)
 					context.clearRect(0, 0, canvasWidth, canvasHeight);
 				context = null;
-				redeem.textContent = translations.redeembtn_close;
+				redeem.textContent = translations.redeembtn;
 			}
 		});
 
