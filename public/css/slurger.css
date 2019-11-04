@@ -463,6 +463,7 @@ footer.bottombar .right .action .badge {
 	font-size: 1.4rem;
 	text-align: center;
 	transition: background-color 100ms ease-in;
+	z-index: 100;
 }
 
 .redeembtn:hover {
