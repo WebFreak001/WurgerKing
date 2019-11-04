@@ -47,8 +47,7 @@ void fetchFlags(MongoDatabase db, string region)
 
 	logInfo("Fetching flags for region %s", region);
 	auto flags = requestBK!(Json[][string])(
-			URL("https://api.burgerking.de/api/o2uvrPdUY57J5WwYs6NtzZ2Knk7TnAUY/v2" ~ region ~ "flags/"),
-			40.hours);
+			URL("https://api.burgerking.de/api/" ~ token ~ "/v2" ~ region ~ "flags/"), 40.hours);
 
 	db.saveFlags(flags, "productCategories", region);
 	db.saveFlags(flags, "storeCategories", region);

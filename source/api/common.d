@@ -8,6 +8,7 @@ import core.time;
 
 import std.algorithm;
 import std.array;
+import std.base64;
 import std.range;
 import std.string;
 import std.typecons;
@@ -27,6 +28,9 @@ static immutable string[] regionNames = [
 	"Suisse", "Svizzera", "Suomi", "Sverige", "България"
 ];
 static assert(regionNames.length == regionLanguages.length);
+
+static immutable string token = (cast(string) Base64.decode(
+		"bzJ1dnIKUGRVWQo1N0o1Vwp3WXM2Tgp0eloyS24KazdUbgpBVVk=").idup).lineSplitter.join();
 
 struct Images
 {
