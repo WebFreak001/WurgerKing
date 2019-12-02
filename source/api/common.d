@@ -287,7 +287,7 @@ mixin template GenericCachable(T, int apiVersion, int subApiVersion,
 		auto ids = items.map!(a => Bson(a["id"].get!int)).array;
 		auto query = ["id" : Bson(["$nin": Bson(ids)]), "_active" : Bson(true)];
 		if (region.length)
-			query["_region"] = Bson(region);
+			query["_region"] = Bson(region[1 .. $ - 1]);
 		T.collection.update(query, [
 				"$set": ["_active": Bson(false), "_order": Bson(1000)],
 				], UpdateFlags.multiUpdate);
