@@ -73,17 +73,17 @@ struct Dimension
 void cacheImages(Images images) @safe
 {
 	if (!images.bgImage.isNull)
-		proxyImage(images.bgImage.url);
+		proxyImage(images.bgImage.get.url);
 	if (!images.fgImage.isNull)
-		proxyImage(images.fgImage.url);
+		proxyImage(images.fgImage.get.url);
 }
 
 void proxyImages(ref Images images) @safe
 {
 	if (!images.bgImage.isNull)
-		images.bgImage.url = proxyImage(images.bgImage.url);
+		images.bgImage.get.url = proxyImage(images.bgImage.get.url);
 	if (!images.fgImage.isNull)
-		images.fgImage.url = proxyImage(images.fgImage.url);
+		images.fgImage.get.url = proxyImage(images.fgImage.get.url);
 }
 
 enum isTilable(T) = __traits(hasMember, T.init, "dimension")

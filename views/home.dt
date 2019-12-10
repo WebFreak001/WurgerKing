@@ -19,7 +19,7 @@ block content
 									img(src="/img/kingfinder.png")
 								- else foreach (image; [tile.images.bgImage, tile.images.fgImage])
 									- if (!image.isNull)
-										img(src=proxyImage(image.url))
+										img(src=proxyImage(image.get.url))
 		footer
 			.info
 			.flag(class="flag-#{region[1 .. 3]}")

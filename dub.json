@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"vibe-d": "~>0.8.3"
+		"vibe-d": "~>0.9.0-alpha.1"
 	},
 	"stringImportPaths": [
 		"views",
