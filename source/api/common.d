@@ -279,8 +279,11 @@ mixin template GenericCachable(T, int apiVersion, int subApiVersion,
 		import vibe.data.bson : Bson;
 		import vibe.data.json : Json;
 		import vibe.core.log : logInfo;
+		import std.datetime : Clock, UTC;
 
 		region = region.normalizeRegion;
+
+		long now = Clock.currTime(UTC()).toUnixTime!long();
 
 		logInfo("Updating " ~ T.stringof ~ " items for region %s", region);
 		auto items = getBKAPI(region);
@@ -296,7 +299,17 @@ mixin template GenericCachable(T, int apiVersion, int subApiVersion,
 			item["_order"] = Json(cast(int) i);
 			item["_apiVer"] = Json(cast(int) apiVersion);
 			item["_subApiVer"] = Json(cast(int) subApiVersion);
-			item["_active"] = Json(true);
+			bool active = true;
+
+			if (auto to = "to" in item)
+				if (to.type == Json.Type.int_)
+					active = active && now < to.get!long;
+
+			if (auto from = "from" in item)
+				if (from.type == Json.Type.int_)
+					active = active && now > from.get!long;
+
+			item["_active"] = Json(active);
 			if (region.length)
 				item["_region"] = Json(region[1 .. $ - 1]);
 			T.collection.update(["id": item["id"], "_region": item["_region"]], item, UpdateFlags.upsert);
