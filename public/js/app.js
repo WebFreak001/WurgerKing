@@ -1151,7 +1151,8 @@ Pages.prototype.onClickCoupon = function (event) {
         var redeem = document.createElement("div");
         redeem.className = "redeembtn";
         redeem.textContent = translations.redeembtn;
-        div.appendChild(redeem);
+        if (!data._promo)
+            div.appendChild(redeem);
         redeem.addEventListener("click", function () {
             if (qr.style.display == "none") {
                 qr.style.display = "";
