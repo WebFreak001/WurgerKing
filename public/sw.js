@@ -1,4 +1,4 @@
-const targetCache = "v3.3.1";
+const targetCache = "v3.4.0";
 const allowedCaches = [targetCache, "static-v1"];
 
 self.addEventListener('install', function (event) {
@@ -35,7 +35,6 @@ self.addEventListener('install', function (event) {
 				'/img/icons/mybk.svg',
 				'/img/icons/search.svg',
 				'/img/icons/share.svg',
-				'/img/bk_logo_bw.svg',
 				'/img/bk_logo.svg',
 				'/img/bordermask-bottom.svg',
 				'/img/bordermask.svg',

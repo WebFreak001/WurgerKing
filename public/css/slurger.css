@@ -35,34 +35,6 @@ body {
 	z-index: 1;
 }
 
-.branded:before {
-	content: "";
-	display: block;
-	z-index: -1;
-	width: 31vw;
-	height: 31vw;
-	position: absolute;
-	top: -5vw;
-	right: -4vw;
-	background-color: #f4ebe4;
-	-webkit-mask-image: url(/img/bk_logo_bw.svg);
-	mask-image: url(/img/bk_logo_bw.svg);
-}
-
-.bigbranded:before {
-	content: "";
-	display: block;
-	z-index: -1;
-	width: 54.5vw;
-	height: 55vw;
-	position: absolute;
-	top: -5vw;
-	left: 0;
-	background-color: #f4ebe4;
-	-webkit-mask-image: url(/img/bk_logo_bw.svg);
-	mask-image: url(/img/bk_logo_bw.svg);
-}
-
 .filler {
 	flex-grow: 1;
 }
