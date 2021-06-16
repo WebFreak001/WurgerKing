@@ -56,7 +56,7 @@ class PublicAPIImpl : PublicAPI
 
 		auto ret = Coupon.collection.find(query).sort(["_order": 1, "to": -1]).limit(limit).map!((a) {
 			auto ret = a.deserializeBson!Coupon;
-			proxyImages(ret.images);
+			proxyCoupon(ret);
 			return ret;
 		}).array;
 

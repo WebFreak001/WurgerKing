@@ -539,6 +539,25 @@ var Pages = /** @class */ (function () {
         div.appendChild(content);
         return content;
     };
+    Pages.prototype.openSlideup = function (name) {
+        var div = document.createElement("div");
+        this.stack.push({ div: div, withBottomBar: false, name: name });
+        var slash = name.lastIndexOf("/");
+        var subname = slash == -1 ? "" : (" " + name.substr(0, slash + 1).replace(/[^a-zA-Z0-9]/g, "_") + "arg");
+        div.className = name.toLowerCase().replace(/[^a-zA-Z0-9]/g, "_") + subname + " loading hidden slideup-popup";
+        document.body.appendChild(div);
+        pages.cancelAnimation = function () {
+            document.body.removeChild(div);
+        };
+        pages.animation = setTimeout(function () {
+            div.classList.remove("hidden");
+            pages.animation = setTimeout(function () {
+                div.classList.remove("loading");
+                pages.cancelAnimation = undefined;
+            }, 120);
+        }, 10);
+        return div;
+    };
     Pages.prototype.back = function (noHistory) {
         var page = this.stack.pop();
         if (page && !noHistory && window.history.state && window.history.state.name == page.name) {
@@ -680,6 +699,7 @@ function createFilterItem(imgUrl, label, initial, onToggle) {
 }
 ///<reference path="pages.ts" />
 ///<reference path="../commons.ts" />
+var allCoupons = [];
 Pages.prototype.openCoupons = function (tile) {
     var subtitle = new Image();
     subtitle.src = "/img/subtitle_coupons_" + translations.asset_language + ".png";
@@ -694,7 +714,7 @@ Pages.prototype.openCoupons = function (tile) {
     backdrop.className = "filter-backdrop";
     backdrop.style.display = "none";
     var settings = document.createElement("div");
-    settings.className = "filter-settings";
+    settings.className = "slideup-popup filter-settings";
     settings.style.display = "none";
     settings.classList.add("hidden");
     var header = document.createElement("div");
@@ -731,6 +751,7 @@ Pages.prototype.openCoupons = function (tile) {
                 filterBtn.appendChild(badge);
             }
             badge.textContent = data.count.toString();
+            window.allCoupons = data.items;
         });
         var changed = showInactive || filterCategories.length > 0;
         if (filterBtn && filterBtn.children[0].tagName == "IMG")
@@ -836,7 +857,20 @@ Pages.prototype.onClickCoupon = function (event) {
         return;
     var data = JSON.parse(dataStr);
     console.log(data);
-    var div = pages.openBlankGeneric("coupons/" + data.id, this.parentElement, true, function () {
+    openCoupon(data, this.parentElement);
+};
+function openCouponById(id, tile) {
+    for (var i_10 = 0; i_10 < window.allCoupons.length; i_10++) {
+        var coupon = window.allCoupons[i_10];
+        if (coupon.id == id) {
+            openCoupon(coupon, tile);
+            return true;
+        }
+    }
+    return false;
+}
+function openCoupon(data, tile) {
+    var div = pages.openBlankGeneric("coupons/" + data.id, tile, true, function () {
         var container = document.createElement("div");
         container.className = "content";
         div.appendChild(container);
@@ -869,12 +903,12 @@ Pages.prototype.onClickCoupon = function (event) {
         var dpr = window.devicePixelRatio || 1;
         var canvasWidth, canvasHeight;
         var lastFrame = performance.now();
-        for (var i_10 = data.barcodes.length - 1; i_10 >= 0; i_10--) {
-            console.log(data.barcodes[i_10]);
-            if (!data.barcodes[i_10].value)
-                data.barcodes.splice(i_10, 1);
-            else if (data.barcodes[i_10].type == "QR")
-                modeIndex = i_10;
+        for (var i_11 = data.barcodes.length - 1; i_11 >= 0; i_11--) {
+            console.log(data.barcodes[i_11]);
+            if (!data.barcodes[i_11].value)
+                data.barcodes.splice(i_11, 1);
+            else if (data.barcodes[i_11].type == "QR")
+                modeIndex = i_11;
         }
         if (data.myBkOnetime || !data.barcodes.length)
             data.barcodes.push({
@@ -1040,17 +1074,17 @@ Pages.prototype.onClickCoupon = function (event) {
                 context.lineWidth = s;
                 context.beginPath();
                 var overCorners = [];
-                for (var i_11 = 0; i_11 < corners.length; i_11++) {
-                    if (start < corners[i_11] && end >= corners[i_11]) {
-                        overCorners.push(corners[i_11]);
+                for (var i_12 = 0; i_12 < corners.length; i_12++) {
+                    if (start < corners[i_12] && end >= corners[i_12]) {
+                        overCorners.push(corners[i_12]);
                     }
                 }
                 if (overCorners.length) {
                     var startPoint = mapPoint(start);
                     var endPoint = mapPoint(end);
                     context.moveTo(startPoint[0], startPoint[1]);
-                    for (var i_12 = 0; i_12 < overCorners.length; i_12++) {
-                        var overCorner = mapPoint(overCorners[i_12]);
+                    for (var i_13 = 0; i_13 < overCorners.length; i_13++) {
+                        var overCorner = mapPoint(overCorners[i_13]);
                         context.lineTo(overCorner[0], overCorner[1]);
                     }
                     context.lineTo(endPoint[0], endPoint[1]);
@@ -1113,6 +1147,110 @@ Pages.prototype.onClickCoupon = function (event) {
             else
                 setTimeout(redraw, 16);
         }
+        function toggleCode() {
+            if (qr.style.display == "none") {
+                qr.style.display = "";
+                if (context)
+                    context.clearRect(0, 0, canvasWidth, canvasHeight);
+                context = null;
+                setTimeout(function () {
+                    qr.style.opacity = "1";
+                    setTimeout(function () {
+                        reinitCanvas();
+                        redraw();
+                    }, 300);
+                }, 50);
+                redeem.textContent = translations.redeembtn_close;
+            }
+            else {
+                qr.style.opacity = "0";
+                qr.style.display = "none";
+                if (context)
+                    context.clearRect(0, 0, canvasWidth, canvasHeight);
+                context = null;
+                redeem.textContent = translations.redeembtn;
+            }
+        }
+        function doUpsell(coupons, upsell_coupon_id) {
+            var upsell = pages.openSlideup("upsell/" + data.id);
+            function hideUpsell() {
+                pages.back();
+                setTimeout(function () {
+                    var _a;
+                    (_a = upsell.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(upsell);
+                }, 150);
+            }
+            function cancelUpsell() {
+                hideUpsell();
+                toggleCode();
+            }
+            var offers = document.createElement("div");
+            offers.className = "offers";
+            var _loop_1 = function (i_14) {
+                var coupon = coupons[i_14];
+                var offer = document.createElement("div");
+                offer.className = "offer wonky";
+                var price_1 = document.createElement("div");
+                price_1.className = "price";
+                price_1.textContent = coupon.price_text;
+                offer.appendChild(price_1);
+                var img = document.createElement("img");
+                img.src = coupon.image_url;
+                offer.appendChild(img);
+                var title_1 = document.createElement("p");
+                title_1.textContent = coupon.title;
+                title_1.className = "title";
+                offer.appendChild(title_1);
+                if (coupons.length == 1) {
+                    var subline = document.createElement("p");
+                    subline.textContent = coupon.subline;
+                    subline.className = "subline";
+                    offer.appendChild(subline);
+                }
+                else {
+                    title_1.classList.add("multiple");
+                }
+                offers.appendChild(offer);
+                offer.addEventListener("click", function () {
+                    hideUpsell();
+                    if (!openCouponById(coupon.id, offer)) {
+                        alert("Upsell coupon doesn't exist");
+                        toggleCode();
+                    }
+                });
+            };
+            for (var i_14 = 0; i_14 < coupons.length; i_14++) {
+                _loop_1(i_14);
+            }
+            var buttons = document.createElement("div");
+            buttons.className = "buttons";
+            if (coupons.length == 1 && upsell_coupon_id) {
+                var confirmButton = document.createElement("div");
+                confirmButton.className = "confirm";
+                confirmButton.textContent = translations.upsell_oneyes;
+                confirmButton.addEventListener("click", function () {
+                    hideUpsell();
+                    if (!openCouponById(upsell_coupon_id)) {
+                        alert("Upsell coupon doesn't exist");
+                        toggleCode();
+                    }
+                });
+                buttons.appendChild(confirmButton);
+            }
+            var denyButton = document.createElement("div");
+            denyButton.className = "deny";
+            denyButton.textContent = translations.upsell_no;
+            denyButton.addEventListener("click", cancelUpsell);
+            buttons.appendChild(denyButton);
+            var title = document.createElement("h1");
+            title.textContent = translations.upsell_title;
+            var subtitle = document.createElement("h2");
+            subtitle.textContent = translations.upsell_subtitle;
+            upsell.appendChild(title);
+            upsell.appendChild(subtitle);
+            upsell.appendChild(offers);
+            upsell.appendChild(buttons);
+        }
         var codeLabel = document.createElement("div");
         codeLabel.textContent = data.plu;
         codeLabel.className = "label";
@@ -1155,26 +1293,15 @@ Pages.prototype.onClickCoupon = function (event) {
             div.appendChild(redeem);
         redeem.addEventListener("click", function () {
             if (qr.style.display == "none") {
-                qr.style.display = "";
-                if (context)
-                    context.clearRect(0, 0, canvasWidth, canvasHeight);
-                context = null;
-                setTimeout(function () {
-                    qr.style.opacity = "1";
-                    setTimeout(function () {
-                        reinitCanvas();
-                        redraw();
-                    }, 300);
-                }, 50);
-                redeem.textContent = translations.redeembtn_close;
+                if (Array.isArray(data.upsell_coupons) && data.upsell_coupons.length > 0) {
+                    doUpsell(data.upsell_coupons, data.upsell_coupon_id);
+                }
+                else {
+                    toggleCode();
+                }
             }
             else {
-                qr.style.opacity = "0";
-                qr.style.display = "none";
-                if (context)
-                    context.clearRect(0, 0, canvasWidth, canvasHeight);
-                context = null;
-                redeem.textContent = translations.redeembtn;
+                toggleCode();
             }
         });
         var infos = document.createElement("div");
@@ -1222,19 +1349,19 @@ Pages.prototype.onClickCoupon = function (event) {
             }
         }
     ]);
-};
+}
 Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCategories, onlyActive, filterLikes, mybk, compressTiles, showPromo) {
     return __awaiter(this, void 0, void 0, function () {
         function computeRowWidth(row) {
             var total = 0;
-            for (var i_13 = 0; i_13 < row.children.length; i_13++) {
-                var w = row.children[i_13].getAttribute("width");
+            for (var i_15 = 0; i_15 < row.children.length; i_15++) {
+                var w = row.children[i_15].getAttribute("width");
                 if (w !== null)
                     total += parseInt(w);
             }
             return total;
         }
-        var categories, couponClickHandler, rows, flattend, count, usedCategories, unfullRows, first, len, i_14, other, j, data, i_15, i_16, item;
+        var categories, couponClickHandler, rows, flattend, count, usedCategories, unfullRows, first, len, i_16, other, j, data, i_17, i_18, item;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -1253,7 +1380,7 @@ Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCa
                         var tr = document.createElement("div");
                         tr.className = "row";
                         div.appendChild(tr);
-                        var _loop_1 = function (j) {
+                        var _loop_2 = function (j) {
                             var cell = row[j];
                             var td = document.createElement("div");
                             td.className = "tile";
@@ -1266,10 +1393,16 @@ Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCa
                                     td.classList.add("old");
                             }
                             var isObtainable = !cell.hidden || cell._hasParent;
+                            flattend.push(cell);
                             if (cell.hidden && !cell.secret && isObtainable)
                                 return "continue";
-                            if (cell.secret || !isObtainable)
+                            // show special if secret (API side) or not obtainable
+                            // don't show special if marked as favorite
+                            if ((cell.secret || !isObtainable) && !likes.check(cell.id)) {
+                                if (onlyActive)
+                                    return "continue";
                                 td.classList.add("secret");
+                            }
                             var content = renderCouponTile(td, cell);
                             content.addEventListener("click", couponClickHandler);
                             if (autoNavigate) {
@@ -1278,7 +1411,6 @@ Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCa
                                     content.click();
                                 }, 400);
                             }
-                            flattend.push(cell);
                             var anyUsed = false;
                             if (Array.isArray(cell.categories))
                                 for (var k = 0; k < cell.categories.length; k++) {
@@ -1295,23 +1427,23 @@ Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCa
                             }
                         };
                         for (var j = 0; j < row.length; j++) {
-                            _loop_1(j);
+                            _loop_2(j);
                         }
                     });
                     while (unfullRows.length > 0) {
                         first = unfullRows[0];
                         len = computeRowWidth(first);
-                        for (i_14 = 1; i_14 < unfullRows.length; i_14++) {
-                            other = computeRowWidth(unfullRows[i_14]);
+                        for (i_16 = 1; i_16 < unfullRows.length; i_16++) {
+                            other = computeRowWidth(unfullRows[i_16]);
                             if (len + other <= 4) {
                                 len += other;
-                                for (j = 0; j < unfullRows[i_14].children.length; j++)
-                                    first.appendChild(unfullRows[i_14].children[j]);
+                                for (j = 0; j < unfullRows[i_16].children.length; j++)
+                                    first.appendChild(unfullRows[i_16].children[j]);
                                 try {
-                                    div.removeChild(unfullRows[i_14]);
+                                    div.removeChild(unfullRows[i_16]);
                                 }
                                 catch (e) { }
-                                unfullRows.splice(i_14, 1);
+                                unfullRows.splice(i_16, 1);
                                 if (len == 4)
                                     break;
                                 else
@@ -1323,16 +1455,16 @@ Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCa
                     return [4 /*yield*/, categories];
                 case 2:
                     data = _a.sent();
-                    for (i_15 = data.length - 1; i_15 >= 0; i_15--)
-                        if (usedCategories.indexOf(data[i_15].id) == -1)
-                            data.splice(i_15, 1);
+                    for (i_17 = data.length - 1; i_17 >= 0; i_17--)
+                        if (usedCategories.indexOf(data[i_17].id) == -1)
+                            data.splice(i_17, 1);
                     data.sort(function (a, b) {
                         return a.id - b.id;
                     });
                     while (settings.lastChild)
                         settings.removeChild(settings.lastChild);
-                    for (i_16 = 0; i_16 < data.length; i_16++) {
-                        item = createFilterItem(data[i_16].icon.url, data[i_16].title, filterCategories.indexOf(data[i_16].id) != -1, function (active) {
+                    for (i_18 = 0; i_18 < data.length; i_18++) {
+                        item = createFilterItem(data[i_18].icon.url, data[i_18].title, filterCategories.indexOf(data[i_18].id) != -1, function (active) {
                             var id = parseInt(this.getAttribute("data-id") || "0");
                             var index = filterCategories.indexOf(id);
                             while (index != -1) {
@@ -1343,7 +1475,7 @@ Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCa
                                 filterCategories.push(id);
                             updateFilters();
                         });
-                        item.setAttribute("data-id", data[i_16].id.toString());
+                        item.setAttribute("data-id", data[i_18].id.toString());
                         // app doesn't color the text, idk what it does with the color
                         // item.style.color = "#" + data[i].color.substr(0, 6);
                         settings.appendChild(item);
@@ -1402,7 +1534,7 @@ Pages.prototype.onClickPromo = function (event, pointer, cellElement, cellIndex)
     var promosWaiter = api.getPromos();
     var div = pages.openBlankGeneric("promos", cellElement, true, function () {
         return __awaiter(this, void 0, void 0, function () {
-            var promos, carousel, targetIndex, i_17, cell, flkty;
+            var promos, carousel, targetIndex, i_19, cell, flkty;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, promosWaiter];
@@ -1411,15 +1543,15 @@ Pages.prototype.onClickPromo = function (event, pointer, cellElement, cellIndex)
                         carousel = document.createElement("div");
                         carousel.className = "carousel";
                         div.appendChild(carousel);
-                        for (i_17 = 0; i_17 < promos.length; i_17++) {
-                            if (promos[i_17].id && ignoredPromos.indexOf(promos[i_17].id) != -1)
+                        for (i_19 = 0; i_19 < promos.length; i_19++) {
+                            if (promos[i_19].id && ignoredPromos.indexOf(promos[i_19].id) != -1)
                                 continue;
                             cell = document.createElement("div");
                             cell.className = "carousel-cell promo";
-                            renderPromo(cell, promos[i_17]);
+                            renderPromo(cell, promos[i_19]);
                             carousel.appendChild(cell);
-                            if (promos[i_17].id == activePromo)
-                                targetIndex = i_17;
+                            if (promos[i_19].id == activePromo)
+                                targetIndex = i_19;
                         }
                         flkty = new Flickity(carousel, {
                             lazyLoad: 1,

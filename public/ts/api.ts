@@ -33,6 +33,14 @@ interface TileCommons extends ItemCommons {
 	dimension: { width: number, height: number };
 }
 
+interface UpsellCoupon {
+	id: number;
+	price_text: string;
+	image_url: string;
+	title: string;
+	subline: string;
+}
+
 interface Coupon extends TileCommons {
 	description: string;
 	footnote: string;
@@ -42,6 +50,8 @@ interface Coupon extends TileCommons {
 	categories: number[];
 	myBkOnly: boolean;
 	myBkOnetime: boolean;
+	upsell_coupon_id: number | null;
+	upsell_coupons: UpsellCoupon[] | null;
 	hidden: boolean;
 	secret: boolean;
 	_active: boolean;

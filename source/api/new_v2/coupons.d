@@ -144,4 +144,17 @@ alias updateCoupons = couponApi.updateItems;
 void cacheCoupon(Coupon coupon)
 {
 	cacheImages(coupon.images);
+
+	foreach (upsell; coupon.upsell_coupons)
+		if (upsell.image_url.length)
+			proxyImage(upsell.image_url);
+}
+
+void proxyCoupon(ref Coupon coupon) @safe
+{
+	proxyImages(coupon.images);
+
+	foreach (ref upsell; coupon.upsell_coupons)
+		if (upsell.image_url.length)
+			upsell.image_url = proxyImage(upsell.image_url);
 }

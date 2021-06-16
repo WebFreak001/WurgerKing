@@ -242,7 +242,7 @@ body {
 }
 
 .titled > .title, .highlit-panel h3, .highlit-panel h4, .highlit-panel p.price, .redeembtn, .bigtile .qrcode .code,
-.filter-settings h4 {
+.filter-settings h4, .upsell_arg {
 	font-family: 'Passion One', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 	text-transform: uppercase;
 	font-size: 1.75rem;
@@ -424,10 +424,7 @@ footer.bottombar .right .action .badge {
 	width: 100%;
 }
 
-.redeembtn {
-	position: fixed;
-	width: 100%;
-	bottom: 64px;
+.redeembtn, .upsell_arg.slideup-popup .buttons .confirm, .upsell_arg.slideup-popup .buttons .deny {
 	background-color: #f7a600;
 	color: white;
 	height: 60px;
@@ -435,10 +432,16 @@ footer.bottombar .right .action .badge {
 	font-size: 1.4rem;
 	text-align: center;
 	transition: background-color 100ms ease-in;
+}
+
+.redeembtn {
+	position: fixed;
+	width: 100%;
+	bottom: 64px;
 	z-index: 100;
 }
 
-.redeembtn:hover {
+.redeembtn:hover, .upsell_arg.slideup-popup .buttons .confirm:hover {
 	background-color: #feba3a;
 }
 
@@ -520,7 +523,7 @@ footer.bottombar .right .action .badge {
 	margin: 0;
 }
 
-.filter-settings, .filter-backdrop {
+.slideup-popup, .filter-backdrop {
 	background-color: #fae5d0;
 	color: #682F1C;
 	position: absolute;
@@ -536,11 +539,11 @@ footer.bottombar .right .action .badge {
 	z-index: 99;
 }
 
-.filter-settings {
+.slideup-popup {
 	transition: opacity 0.1s ease-in, transform 0.1s ease-in;
 }
 
-.filter-settings.hidden {
+.slideup-popup.hidden {
 	opacity: 0;
 	transform: translateY(64px);
 }
@@ -602,4 +605,92 @@ footer.bottombar .right .action .badge {
 
 .tile.inactive.old {
 	opacity: 0.4;
+}
+
+.upsell_arg.slideup-popup {
+  background-color: white;
+	padding-top: 12pt;
+	border-top-left-radius: 12pt;
+	border-top-right-radius: 12pt;
+	box-shadow: 0 -400px 0 400px rgba(0, 0, 0, 0.5);
+	display: flex;
+	flex-direction: column;
+	height: 95vh;
+	bottom: 0;
+	z-index: 1000;
+}
+
+.upsell_arg.slideup-popup h1,
+.upsell_arg.slideup-popup h2 {
+	margin: 0.25em 0;
+	text-align: center;
+	font-size: 1.5rem;
+}
+
+.upsell_arg.slideup-popup h2 {
+	color: #f7a600;
+}
+
+.upsell_arg.slideup-popup .offers {
+	flex-grow: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.upsell_arg.slideup-popup .offers > .offer {
+	width: 50%;
+	position: relative;
+	background-color: #fef0e3;
+}
+
+.upsell_arg.slideup-popup .offers > .offer:nth-child(4n+2), .upsell_arg.slideup-popup .offers > .offer:nth-child(4n+3) {
+	background-color: #efdac5;
+}
+
+.upsell_arg.slideup-popup .offers > .offer > .price {
+	position: absolute;
+	left: 0;
+	right: 0;
+	font-size: 1.2rem;
+	top: 1em;
+	width: min-content;
+	padding: 0.25em 0.4em;
+	background-color: #f7a600;
+	border-radius: 100px;
+	margin: auto;
+	text-align: center;
+}
+
+.upsell_arg.slideup-popup .offers > .offer img {
+	width: 100%;
+}
+
+.upsell_arg.slideup-popup .offers > .offer:only-child {
+	width: 100%;
+	align-self: flex-start;
+}
+
+.upsell_arg.slideup-popup .offers > .offer > p {
+	margin: 8pt 4pt;
+	text-align: center;
+}
+
+.upsell_arg.slideup-popup .offers > .offer > p.multiple {
+	font-size: 1.5rem;
+}
+
+.upsell_arg.slideup-popup .offers > .offer > p.subline {
+	font-size: 1rem;
+}
+
+.upsell_arg.slideup-popup .buttons > div {
+	text-align: center;
+}
+
+.upsell_arg.slideup-popup .buttons .deny {
+	color: #f7a600;
+	background-color: white;
 }

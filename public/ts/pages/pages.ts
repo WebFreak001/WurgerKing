@@ -69,6 +69,27 @@ class Pages {
 		return content;
 	}
 
+	openSlideup(name: string): HTMLDivElement {
+		const div = document.createElement("div");
+		this.stack.push({ div: div, withBottomBar: false, name: name });
+		const slash = name.lastIndexOf("/");
+		const subname = slash == -1 ? "" : (" " + name.substr(0, slash + 1).replace(/[^a-zA-Z0-9]/g, "_") + "arg");
+		div.className = name.toLowerCase().replace(/[^a-zA-Z0-9]/g, "_") + subname + " loading hidden slideup-popup";
+		document.body.appendChild(div);
+		pages.cancelAnimation = function () {
+			document.body.removeChild(div);
+		};
+		pages.animation = setTimeout(function () {
+			div.classList.remove("hidden");
+			pages.animation = setTimeout(function () {
+				div.classList.remove("loading");
+				pages.cancelAnimation = undefined;
+			}, 120);
+		}, 10);
+
+		return div;
+	}
+
 	back(noHistory?: boolean): void {
 		const page = this.stack.pop();
 		if (page && !noHistory && window.history.state && window.history.state.name == page.name) {

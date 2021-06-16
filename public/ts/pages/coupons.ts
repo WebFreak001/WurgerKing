@@ -22,6 +22,7 @@ interface Pages {
 }
 
 declare var QRious: any;
+var allCoupons = [];
 
 Pages.prototype.openCoupons = function (tile?: Tile) {
 	let subtitle = new Image();
@@ -40,7 +41,7 @@ Pages.prototype.openCoupons = function (tile?: Tile) {
 	backdrop.style.display = "none";
 
 	let settings = document.createElement("div");
-	settings.className = "filter-settings";
+	settings.className = "slideup-popup filter-settings";
 	settings.style.display = "none";
 	settings.classList.add("hidden");
 
@@ -86,6 +87,8 @@ Pages.prototype.openCoupons = function (tile?: Tile) {
 				filterBtn.appendChild(badge);
 			}
 			badge.textContent = data.count.toString();
+
+			window.allCoupons = data.items;
 		});
 		let changed = showInactive || filterCategories.length > 0;
 		if (filterBtn && filterBtn.children[0].tagName == "IMG")
@@ -199,7 +202,22 @@ Pages.prototype.onClickCoupon = function (this: HTMLElement, event: MouseEvent) 
 		return;
 	let data: Coupon = JSON.parse(dataStr);
 	console.log(data);
-	let div = pages.openBlankGeneric("coupons/" + data.id, this.parentElement!, true, function () {
+	openCoupon(data, this.parentElement!);
+}
+
+function openCouponById(id: number, tile?: HTMLElement): boolean {
+	for (let i = 0; i < window.allCoupons.length; i++) {
+		const coupon: Coupon = window.allCoupons[i];
+		if (coupon.id == id) {
+			openCoupon(coupon, tile);
+			return true;
+		}
+	}
+	return false;
+}
+
+function openCoupon(data: Coupon, tile?: HTMLElement) {
+	let div = pages.openBlankGeneric("coupons/" + data.id, tile, true, function () {
 		let container = document.createElement("div");
 		container.className = "content";
 		div.appendChild(container);
@@ -514,6 +532,124 @@ Pages.prototype.onClickCoupon = function (this: HTMLElement, event: MouseEvent) 
 				setTimeout(redraw, 16);
 		}
 
+		function toggleCode() {
+			if (qr.style.display == "none") {
+				qr.style.display = "";
+				if (context)
+					context.clearRect(0, 0, canvasWidth, canvasHeight);
+				context = null;
+				setTimeout(function () {
+					qr.style.opacity = "1";
+					setTimeout(function () {
+						reinitCanvas();
+						redraw();
+					}, 300);
+				}, 50);
+				redeem.textContent = translations.redeembtn_close;
+			} else {
+				qr.style.opacity = "0";
+				qr.style.display = "none";
+				if (context)
+					context.clearRect(0, 0, canvasWidth, canvasHeight);
+				context = null;
+				redeem.textContent = translations.redeembtn;
+			}
+		}
+
+		function doUpsell(coupons: UpsellCoupon[], upsell_coupon_id: number | null) {
+			let upsell = pages.openSlideup("upsell/" + data.id);
+
+			function hideUpsell() {
+				pages.back();
+				setTimeout(function() {
+					upsell.parentElement?.removeChild(upsell);
+				}, 150);
+			}
+
+			function cancelUpsell() {
+				hideUpsell();
+				toggleCode();
+			}
+
+			let offers = document.createElement("div");
+			offers.className = "offers";
+
+			for (let i = 0; i < coupons.length; i++) {
+				const coupon = coupons[i];
+				let offer = document.createElement("div");
+				offer.className = "offer wonky";
+
+				let price = document.createElement("div");
+				price.className = "price";
+				price.textContent = coupon.price_text;
+				offer.appendChild(price);
+
+				const img = document.createElement("img");
+				img.src = coupon.image_url;
+				offer.appendChild(img);
+
+				let title = document.createElement("p");
+				title.textContent = coupon.title;
+				title.className = "title";
+				offer.appendChild(title);
+
+				if (coupons.length == 1)
+				{
+					let subline = document.createElement("p");
+					subline.textContent = coupon.subline;
+					subline.className = "subline";
+					offer.appendChild(subline);
+				}
+				else
+				{
+					title.classList.add("multiple");
+				}
+
+				offers.appendChild(offer);
+
+				offer.addEventListener("click", () => {
+					hideUpsell();
+					if (!openCouponById(coupon.id, offer)) {
+						alert("Upsell coupon doesn't exist");
+						toggleCode();
+					}
+				});
+			}
+
+			let buttons = document.createElement("div");
+			buttons.className = "buttons";
+			if (coupons.length == 1 && upsell_coupon_id)
+			{
+				let confirmButton = document.createElement("div");
+				confirmButton.className = "confirm";
+				confirmButton.textContent = translations.upsell_oneyes;
+				confirmButton.addEventListener("click", () => {
+					hideUpsell();
+					if (!openCouponById(upsell_coupon_id)) {
+						alert("Upsell coupon doesn't exist");
+						toggleCode();
+					}
+				})
+				buttons.appendChild(confirmButton);
+			}
+
+			let denyButton = document.createElement("div");
+			denyButton.className = "deny";
+			denyButton.textContent = translations.upsell_no;
+			denyButton.addEventListener("click", cancelUpsell);
+			buttons.appendChild(denyButton);
+
+			let title = document.createElement("h1");
+			title.textContent = translations.upsell_title;
+			let subtitle = document.createElement("h2");
+			subtitle.textContent = translations.upsell_subtitle;
+
+			upsell.appendChild(title);
+			upsell.appendChild(subtitle);
+			upsell.appendChild(offers);
+			upsell.appendChild(buttons);
+		}
+
 		let codeLabel = document.createElement("div");
 		codeLabel.textContent = data.plu;
 		codeLabel.className = "label";
@@ -560,26 +696,20 @@ Pages.prototype.onClickCoupon = function (this: HTMLElement, event: MouseEvent) 
 			div.appendChild(redeem);
 
 		redeem.addEventListener("click", function () {
-			if (qr.style.display == "none") {
-				qr.style.display = "";
-				if (context)
-					context.clearRect(0, 0, canvasWidth, canvasHeight);
-				context = null;
-				setTimeout(function () {
-					qr.style.opacity = "1";
-					setTimeout(function () {
-						reinitCanvas();
-						redraw();
-					}, 300);
-				}, 50);
-				redeem.textContent = translations.redeembtn_close;
-			} else {
-				qr.style.opacity = "0";
-				qr.style.display = "none";
-				if (context)
-					context.clearRect(0, 0, canvasWidth, canvasHeight);
-				context = null;
-				redeem.textContent = translations.redeembtn;
+			if (qr.style.display == "none")
+			{
+				if (Array.isArray(data.upsell_coupons) && data.upsell_coupons.length > 0)
+				{
+					doUpsell(data.upsell_coupons, data.upsell_coupon_id);
+				}
+				else
+				{
+					toggleCode();
+				}
+			}
+			else
+			{
+				toggleCode();
 			}
 		});
 
@@ -667,10 +797,16 @@ Pages.prototype.updateCoupons = async function (div, settings, updateFilters, fi
 					td.classList.add("old");
 			}
 			const isObtainable = !cell.hidden || cell._hasParent;
+			flattend.push(cell);
 			if (cell.hidden && !cell.secret && isObtainable)
 				continue;
-			if (cell.secret || !isObtainable)
+			// show special if secret (API side) or not obtainable
+			// don't show special if marked as favorite
+			if ((cell.secret || !isObtainable) && !likes.check(cell.id)) {
+				if (onlyActive)
+					continue;
 				td.classList.add("secret");
+			}
 			let content = renderCouponTile(td, cell);
 			content.addEventListener("click", couponClickHandler);
 			if (autoNavigate) {
@@ -679,7 +815,6 @@ Pages.prototype.updateCoupons = async function (div, settings, updateFilters, fi
 					content.click();
 				}, 400);
 			}
-			flattend.push(cell);
 
 			let anyUsed = false;
 			if (Array.isArray(cell.categories))

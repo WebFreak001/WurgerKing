@@ -52,6 +52,18 @@ msgstr "Länderauswahl"
 msgid "page_country_subtitle"
 msgstr "Unterschiedliche Sprachen. Gleicher Geschmack."
 
+msgid "upsell_title"
+msgstr "Hast du Hunger?"
+
+msgid "upsell_subtitle"
+msgstr "Darf's ein bisschen mehr sein..."
+
+msgid "upsell_oneyes"
+msgstr "Ja, mach es gross!"
+
+msgid "upsell_no"
+msgstr "Nein danke"
+
 msgid "ex_filter_inactive"
 msgstr "Versteckte/Abgelaufene Anzeigen"
 
