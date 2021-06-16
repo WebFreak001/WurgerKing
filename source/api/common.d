@@ -14,8 +14,7 @@ import std.string;
 import std.typecons;
 
 static immutable string[] bkRegions = [
-	"/cz/cs/", "/de/de/", "/nl/nl/", "/at/de/", "/ch/de/", "/ch/fr/", "/ch/it/",
-	"/fi/fi/", "/se/sv/", "/bg/bg/"
+	"/de/de/", "/de/en/"
 ];
 static immutable string defaultBkRegion = bkRegions[1];
 
@@ -24,8 +23,7 @@ static immutable string[] regionLanguages = bkRegions.map!(
 		a => a[4 .. 6] ~ '_' ~ a[1 .. 3].toUpper).array;
 
 static immutable string[] regionNames = [
-	"Česká republika", "Deutschland", "Nederland", "Österreich", "Schweiz",
-	"Suisse", "Svizzera", "Suomi", "Sverige", "България"
+	"Deutschland", "Germany"
 ];
 static assert(regionNames.length == regionLanguages.length);
 
@@ -126,7 +124,8 @@ auto byRows(Tiles)(Tiles tiles)
 	static struct RowIterator
 	{
 		Tiles tiles;
-		Tile[4] row;
+		// longer than possible 4 because of hidden items
+		Tile[16] row;
 		int rowLength = 0;
 		Tile[] front;
 
@@ -150,14 +149,14 @@ auto byRows(Tiles)(Tiles tiles)
 			rowLength = 1;
 			row[0] = tiles.front;
 			tiles.popFront;
-			int sum = row[0].dimension.width;
+			int sum = row[0].effectiveWidth;
 			while (sum < 4 && rowLength < 4 && !tiles.empty)
 			{
-				if (sum + tiles.front.dimension.width > 4)
+				if (sum + tiles.front.effectiveWidth > 4)
 					break;
 				row[rowLength++] = tiles.front;
 				tiles.popFront;
-				sum += row[rowLength - 1].dimension.width;
+				sum += row[rowLength - 1].effectiveWidth;
 			}
 			front = row[0 .. rowLength].dup;
 		}
@@ -172,6 +171,16 @@ auto byRows(Tiles)(Tiles tiles)
 	if (!ret.empty)
 		ret.popFront();
 	return ret;
+}
+
+private int effectiveWidth(Tile)(Tile tile)
+{
+	static if (is(typeof(tile.hidden)))
+	{
+		if (tile.hidden)
+			return 0;
+	}
+	return tile.dimension.width;
 }
 
 unittest
@@ -247,23 +256,54 @@ string normalizeRegion(string region)
 	return region;
 }
 
+string regionGetLanguage(string region)
+{
+	if (region.length == "/de/de/".length)
+		return region[4 .. 6];
+	else
+		return region;
+}
+
+enum Localizable
+{
+	no,
+	replaceDeDe,
+	acceptLanguageHeader
+}
+
 mixin template GenericCachable(T, int apiVersion, int subApiVersion,
-		string endpoint, Duration ttl, bool localizable = true)
+		string endpoint, Duration ttl, alias localizable = Localizable.replaceDeDe)
+{
+	mixin ComplexCachable!(Json[], T, apiVersion, subApiVersion, endpoint, ttl, localizable);
+}
+
+mixin template ComplexCachable(APIResult, T, int apiVersion, int subApiVersion,
+		string endpoint, Duration ttl, alias localizable = Localizable.replaceDeDe)
 {
 	enum bkApiVersion = apiVersion;
 	enum bkSubApiVersion = subApiVersion;
 
-	Json[] getBKAPI(string region)
+	APIResult getBKAPI(string region)
 	{
 		if (region.length)
-			return requestBK!(Json[])(URL(endpoint.replace("/de/de/", region)), ttl);
+		{
+			static if (is(typeof(localizable) == bool) || localizable == Localizable.replaceDeDe)
+			{
+				return requestBK!APIResult(URL(endpoint.replace("/de/de/", region)), ttl);
+			}
+			else static if (localizable == Localizable.acceptLanguageHeader)
+			{
+				return requestBK!APIResult(URL(endpoint), ttl, ["Accept-Language": region.regionGetLanguage]);
+			}
+			else static assert (false, "unsupported localizable argument");
+		}
 		else
-			return requestBK!(Json[])(URL(endpoint), ttl);
+			return requestBK!APIResult(URL(endpoint), ttl);
 	}
 
 	void updateItems()
 	{
-		static if (localizable)
+		static if ((is(typeof(localizable) == bool) && localizable) || localizable != Localizable.no)
 		{
 			foreach (region; bkRegions)
 				updateItems(region);
@@ -276,8 +316,8 @@ mixin template GenericCachable(T, int apiVersion, int subApiVersion,
 
 	void updateItems(string region)
 	{
-		import vibe.data.bson : Bson;
-		import vibe.data.json : Json;
+		import vibe.data.bson;
+		import vibe.data.json;
 		import vibe.core.log : logInfo;
 		import std.datetime : Clock, UTC;
 
@@ -286,12 +326,26 @@ mixin template GenericCachable(T, int apiVersion, int subApiVersion,
 		long now = Clock.currTime(UTC()).toUnixTime!long();
 
 		logInfo("Updating " ~ T.stringof ~ " items for region %s", region);
-		auto items = getBKAPI(region);
+		auto apires = getBKAPI(region);
+		static if (is(typeof(APIResult.init.flatten)))
+			auto items = apires.flatten();
+		else
+			auto items = apires;
+		static if (is(typeof(T.init.convert)))
+		{
+			alias Dst = typeof(T.init.convert());
+			items = items.map!(a => deserializeJson!T(a).convert.serializeToJson).array;
+		}
+		else
+		{
+			alias Dst = T;
+		}
+
 		auto ids = items.map!(a => Bson(a["id"].get!int)).array;
 		auto query = ["id" : Bson(["$nin": Bson(ids)]), "_active" : Bson(true)];
 		if (region.length)
 			query["_region"] = Bson(region[1 .. $ - 1]);
-		T.collection.update(query, [
+		Dst.collection.update(query, [
 				"$set": ["_active": Bson(false), "_order": Bson(1000)],
 				], UpdateFlags.multiUpdate);
 		foreach (i, item; items)
@@ -312,7 +366,7 @@ mixin template GenericCachable(T, int apiVersion, int subApiVersion,
 			item["_active"] = Json(active);
 			if (region.length)
 				item["_region"] = Json(region[1 .. $ - 1]);
-			T.collection.update(["id": item["id"], "_region": item["_region"]], item, UpdateFlags.upsert);
+			Dst.collection.update(["id": item["id"], "_region": item["_region"]], item, UpdateFlags.upsert);
 		}
 		logInfo("Upserted %s items for region %s", items.length, region);
 	}

@@ -627,3 +627,7 @@ footer.bottombar .right .action .badge {
 .tile.inactive.old {
 	opacity: 0.4;
 }
+
+.tile.secret {
+	outline: 2px solid lime;
+}

@@ -52,6 +52,9 @@ msgstr "Různé jazyky, stejné chutě."
 msgid "ex_filter_inactive"
 msgstr "Zobrazit vypršené"
 
+msgid "ex_filter_promo"
+msgstr "Show promos"
+
 msgid "ex_name_prompt"
 msgstr "Zadejte nové jméno:"
 

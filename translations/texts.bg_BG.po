@@ -52,6 +52,9 @@ msgstr "Различни езици. същия вкус."
 msgid "ex_filter_inactive"
 msgstr "Reveal expired"
 
+msgid "ex_filter_promo"
+msgstr "Show promos"
+
 msgid "ex_name_prompt"
 msgstr "Enter new name:"
 

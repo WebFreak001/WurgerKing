@@ -4,7 +4,7 @@ import api.common;
 import api.public_.definition;
 import api.v2.flags;
 import api.v2.promos;
-import api.v4.coupons;
+import api.new_v2.coupons;
 
 import std.algorithm;
 import std.array;
@@ -19,7 +19,8 @@ class PublicAPIImpl : PublicAPI
 {
 	Coupon[][] getCoupons(string region, int[] filterCategories = null,
 			bool onlyActive = true, bool hideExpired = false, int limit = 100,
-			bool allGeo = false, int[] filterIds = null, bool mybk = false) @safe
+			bool allGeo = false, int[] filterIds = null, bool mybk = false,
+			bool compactRows = false, bool showPromo = true) @safe
 	{
 		if (limit < 1)
 			limit = 1;
@@ -31,6 +32,8 @@ class PublicAPIImpl : PublicAPI
 		query["_apiVer"] = Bson(couponApiVersion);
 		if (onlyActive)
 			query["_active"] = Bson(true);
+		if (!showPromo)
+			query["_promo"] = Bson(["$ne": Bson(true)]);
 		if (hideExpired)
 			query["to"] = Bson([
 					"$gte": Bson(Clock.currTime.toUnixTime!long - 6 * 60 * 60)
@@ -51,11 +54,16 @@ class PublicAPIImpl : PublicAPI
 			query = ["$or": Bson([Bson(query), Bson(other)])];
 		}
 
-		return Coupon.collection.find(query).sort(["_order": 1, "to": -1]).limit(limit).map!((a) {
+		auto ret = Coupon.collection.find(query).sort(["_order": 1, "to": -1]).limit(limit).map!((a) {
 			auto ret = a.deserializeBson!Coupon;
 			proxyImages(ret.images);
 			return ret;
-		}).array.compactRows.byRows.array;
+		}).array;
+
+		if (compactRows)
+			ret = ret.compactRows;
+
+		return ret.byRows.array;
 	}
 
 	Promo[] getPromos(string region, string filterStore = null, bool onlyActive = true, int limit = 100) @safe

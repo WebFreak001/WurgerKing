@@ -5,7 +5,7 @@ import api.public_.impl;
 import api.v2.flags;
 import api.v2.promos;
 import api.v3.tiles;
-import api.v4.coupons;
+import api.new_v2.coupons;
 
 import std.algorithm;
 import std.base64;

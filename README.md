@@ -1,6 +1,6 @@
 # Würger King
 
-An unofficial free and open source cross-platform proxy server & web UI for the Burger King app in Czech Republic, Germany, Netherlands, Austria, Switzerland, Finland, Sweden and Bulgaria.
+An unofficial free and open source cross-platform proxy server & web UI for the Burger King app in Germany. (coupons only support Germany due to API changes)
 
 This app can be used on old smartphones and unsupported operating systems and offers near full functionality for promotions and coupons.
 

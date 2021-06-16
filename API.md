@@ -1,3 +1,18 @@
+# New API
+
+Introduced around 2021 - API URLs:
+
+Old API still mostly works, just need new coupons endpoint.
+
+- Tracking URLs:
+	- Staging: https://sondheim.appboy.com/api/v3/
+	- Production: https://sdk.iad-01.braze.com/api/v3/
+
+Coupons: https://mo.burgerking-app.eu/api/v2/coupons
+
+Austrian coupons are still served through https://api.burgerking.de/api/{token}/v4/at/de/coupons/
+# Old API
+
 https://api.burgerking.de/api/{token}/v4/de/de/coupons/
 
 https://api.burgerking.de/api/{token}/v2/de/de/meta
@@ -33,3 +48,4 @@ where de/de can also be:
 - bg/bg
 
 some don't have barcodes
+

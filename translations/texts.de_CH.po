@@ -55,6 +55,9 @@ msgstr "Unterschiedliche Sprachen. Gleicher Geschmack."
 msgid "ex_filter_inactive"
 msgstr "Versteckte/Abgelaufene Anzeigen"
 
+msgid "ex_filter_promo"
+msgstr "Promotions Anzeigen"
+
 msgid "ex_name_prompt"
 msgstr "Neuen Namen eingeben:"
 

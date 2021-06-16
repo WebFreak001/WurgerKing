@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var api = {
-    getCoupons: function (filterCategories, onlyActive, limit, allGeo, filterIds, mybk) {
+    getCoupons: function (filterCategories, onlyActive, limit, allGeo, filterIds, mybk, compactRows, showPromo) {
         return __awaiter(this, void 0, void 0, function () {
             var url, response;
             return __generator(this, function (_a) {
@@ -55,6 +55,10 @@ var api = {
                             url += "allGeo=" + encodeURIComponent(allGeo ? "true" : "false") + "&";
                         if (mybk !== undefined)
                             url += "mybk=" + encodeURIComponent(mybk ? "true" : "false") + "&";
+                        if (compactRows !== undefined)
+                            url += "compactRows=" + encodeURIComponent(compactRows ? "true" : "false") + "&";
+                        if (showPromo !== undefined)
+                            url += "showPromo=" + encodeURIComponent(showPromo ? "true" : "false") + "&";
                         url += "region=" + encodeURIComponent(region);
                         return [4 /*yield*/, fetch(url)];
                     case 1:
@@ -679,7 +683,9 @@ function createFilterItem(imgUrl, label, initial, onToggle) {
 Pages.prototype.openCoupons = function (tile) {
     var subtitle = new Image();
     subtitle.src = "/img/subtitle_coupons_" + translations.asset_language + ".png";
+    var compressTiles = false;
     var showInactive = false;
+    var showPromo = true;
     var filterLikes = false;
     var mybk = false;
     var filterCategories = [];
@@ -715,7 +721,7 @@ Pages.prototype.openCoupons = function (tile) {
     items.className = "filters";
     itemsContainer.appendChild(items);
     function refreshItems() {
-        pages.updateCoupons(div, items, refreshItems, filterCategories, !showInactive, filterLikes, mybk).then(function (data) {
+        pages.updateCoupons(div, items, refreshItems, filterCategories, !showInactive, filterLikes, mybk, compressTiles, showPromo).then(function (data) {
             if (!filterBtn)
                 return;
             var badge = filterBtn.querySelector(".badge");
@@ -768,6 +774,11 @@ Pages.prototype.openCoupons = function (tile) {
         refreshItems();
     });
     itemsContainer.appendChild(inactiveToggle);
+    var promoToggle = createFilterItem(undefined, translations.ex_filter_promo, showPromo, function (active) {
+        showPromo = active;
+        refreshItems();
+    });
+    itemsContainer.appendChild(promoToggle);
     var div = this.openTitledGeneric("coupons", tile, translations.page_coupons, true, undefined, function () {
         var title = div.parentElement.querySelectorOrThrow(".title", true);
         var img = document.createElement("img");
@@ -1211,7 +1222,7 @@ Pages.prototype.onClickCoupon = function (event) {
         }
     ]);
 };
-Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCategories, onlyActive, filterLikes, mybk) {
+Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCategories, onlyActive, filterLikes, mybk, compressTiles, showPromo) {
     return __awaiter(this, void 0, void 0, function () {
         function computeRowWidth(row) {
             var total = 0;
@@ -1230,7 +1241,7 @@ Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCa
                         div.removeChild(div.lastChild);
                     categories = meta.getProductCategories();
                     couponClickHandler = this.onClickCoupon;
-                    return [4 /*yield*/, api.getCoupons(undefined, onlyActive, undefined, undefined, filterLikes ? likes.getIds() : undefined, mybk)];
+                    return [4 /*yield*/, api.getCoupons(undefined, onlyActive, undefined, undefined, filterLikes ? likes.getIds() : undefined, mybk, compressTiles, showPromo)];
                 case 1:
                     rows = _a.sent();
                     flattend = [];
@@ -1253,6 +1264,10 @@ Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCa
                                 if (diff > 30 * 24 * 60 * 60 * 1000)
                                     td.classList.add("old");
                             }
+                            if (cell.hidden && !cell.secret)
+                                return "continue";
+                            if (cell.secret)
+                                td.classList.add("secret");
                             var content = renderCouponTile(td, cell);
                             content.addEventListener("click", couponClickHandler);
                             if (autoNavigate) {

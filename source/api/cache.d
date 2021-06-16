@@ -25,7 +25,15 @@ bool isCacheSafeChar(dchar c)
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || (c == '_');
 }
 
-string cacheName(string s) @trusted
+string[string] headerCacheNames;
+static this()
+{
+	headerCacheNames = [
+		"Accept-Language": "_L"
+	];
+}
+
+string cacheName(string s, string[string] cachableHeaders = null) @trusted
 {
 	auto extEnd = s.indexOf('?');
 	if (extEnd == -1)
@@ -37,10 +45,29 @@ string cacheName(string s) @trusted
 	if (!extension.length || extension[0] != '.' || !extension[1 .. $].all!isCacheSafeChar)
 		extension = null;
 
-	char[] ret = new char[s.length + extension.length];
+	string extra;
+	if (cachableHeaders.length)
+	{
+		auto data = appender!string;
+		data ~= "_";
+		foreach (key, value; cachableHeaders)
+		{
+			data ~= "_h";
+			if (auto shortened = key in headerCacheNames)
+				data ~= *shortened;
+			else
+				data ~= key;
+			data ~= "__";
+			data ~= value;
+		}
+		extra = data.data;
+	}
+
+	char[] ret = new char[s.length + extra.length + extension.length];
 	ret[0 .. s.length] = s;
-	ret[s.length .. $] = extension;
-	foreach (ref c; ret[0 .. s.length])
+	ret[s.length .. s.length + extra.length] = extra;
+	ret[s.length + extra.length .. $] = extension;
+	foreach (ref c; ret[0 .. s.length + extra.length])
 		if (!c.isCacheSafeChar)
 			c = '_';
 	return cast(string) ret;
@@ -88,9 +115,9 @@ string proxyFile(URL file, Duration lifetime = 3650.days) @safe
 	}
 }
 
-T requestBK(T)(URL endpoint, Duration lifetime = 1.days)
+T requestBK(T)(URL endpoint, Duration lifetime = 1.days, string[string] cachableHeaders = null)
 {
-	auto filename = NativePath("cache") ~ NativePath(cacheName(endpoint.toString));
+	auto filename = NativePath("cache") ~ NativePath(cacheName(endpoint.toString, cachableHeaders));
 
 	try
 	{
@@ -107,7 +134,10 @@ T requestBK(T)(URL endpoint, Duration lifetime = 1.days)
 	{
 		T ret;
 		Json json;
-		requestHTTP(endpoint, null, (scope res) {
+		requestHTTP(endpoint, (scope req) {
+			foreach (key, value; cachableHeaders)
+				req.headers.addField(key, value);
+		}, (scope res) {
 			if (res.statusCode != 200)
 				throw new Exception("Got unexpected status code " ~ res.statusCode.to!string);
 

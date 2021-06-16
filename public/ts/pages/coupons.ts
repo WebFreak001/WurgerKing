@@ -11,7 +11,9 @@ interface Pages {
 		filterCategories: number[],
 		onlyActive?: boolean,
 		filterLikes?: boolean,
-		mybk?: boolean
+		mybk?: boolean,
+		compressTiles?: boolean,
+		showPromo?: boolean
 	): Promise<{
 		items: Coupon[],
 		count: number,
@@ -25,7 +27,9 @@ Pages.prototype.openCoupons = function (tile?: Tile) {
 	let subtitle = new Image();
 	subtitle.src = "/img/subtitle_coupons_" + translations.asset_language + ".png";
 
+	const compressTiles = false;
 	let showInactive = false;
+	let showPromo = true;
 	let filterLikes = false;
 	let mybk = false;
 	let filterCategories: number[] = [];
@@ -71,7 +75,7 @@ Pages.prototype.openCoupons = function (tile?: Tile) {
 	itemsContainer.appendChild(items);
 
 	function refreshItems() {
-		pages.updateCoupons(div, items, refreshItems, filterCategories, !showInactive, filterLikes, mybk).then(function (data) {
+		pages.updateCoupons(div, items, refreshItems, filterCategories, !showInactive, filterLikes, mybk, compressTiles, showPromo).then(function (data) {
 			if (!filterBtn)
 				return;
 
@@ -130,6 +134,12 @@ Pages.prototype.openCoupons = function (tile?: Tile) {
 		refreshItems();
 	});
 	itemsContainer.appendChild(inactiveToggle);
+
+	let promoToggle = createFilterItem(undefined, translations.ex_filter_promo, showPromo, function (active) {
+		showPromo = active;
+		refreshItems();
+	});
+	itemsContainer.appendChild(promoToggle);
 
 	let div = this.openTitledGeneric("coupons", tile, translations.page_coupons, true, undefined, function () {
 		let title = div.parentElement!.querySelectorOrThrow(".title", true);
@@ -626,14 +636,14 @@ Pages.prototype.onClickCoupon = function (this: HTMLElement, event: MouseEvent) 
 		])
 }
 
-Pages.prototype.updateCoupons = async function (div, settings, updateFilters, filterCategories, onlyActive, filterLikes, mybk) {
+Pages.prototype.updateCoupons = async function (div, settings, updateFilters, filterCategories, onlyActive, filterLikes, mybk, compressTiles, showPromo) {
 	while (div.lastChild)
 		div.removeChild(div.lastChild);
 
 	let categories = meta.getProductCategories();
 
 	let couponClickHandler = this.onClickCoupon;
-	const rows = await api.getCoupons(undefined, onlyActive, undefined, undefined, filterLikes ? likes.getIds() : undefined, mybk);
+	const rows = await api.getCoupons(undefined, onlyActive, undefined, undefined, filterLikes ? likes.getIds() : undefined, mybk, compressTiles, showPromo);
 	let flattend: Coupon[] = [];
 	let count = 0;
 	let usedCategories: number[] = [];
@@ -655,6 +665,10 @@ Pages.prototype.updateCoupons = async function (div, settings, updateFilters, fi
 				if (diff > 30 * 24 * 60 * 60 * 1000)
 					td.classList.add("old");
 			}
+			if (cell.hidden && !cell.secret)
+				continue;
+			if (cell.secret)
+				td.classList.add("secret");
 			let content = renderCouponTile(td, cell);
 			content.addEventListener("click", couponClickHandler);
 			if (autoNavigate) {

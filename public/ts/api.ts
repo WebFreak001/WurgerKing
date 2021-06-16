@@ -42,6 +42,8 @@ interface Coupon extends TileCommons {
 	categories: number[];
 	myBkOnly: boolean;
 	myBkOnetime: boolean;
+	hidden: boolean;
+	secret: boolean;
 	_active: boolean;
 }
 
@@ -59,7 +61,9 @@ const api = {
 		limit?: number,
 		allGeo?: boolean,
 		filterIds?: number[],
-		mybk?: boolean):
+		mybk?: boolean,
+		compactRows?: boolean,
+		showPromo?: boolean):
 		Promise<Coupon[][]> {
 		var url = "/api/coupons?";
 		if (filterCategories !== undefined)
@@ -74,6 +78,10 @@ const api = {
 			url += "allGeo=" + encodeURIComponent(allGeo ? "true" : "false") + "&";
 		if (mybk !== undefined)
 			url += "mybk=" + encodeURIComponent(mybk ? "true" : "false") + "&";
+		if (compactRows !== undefined)
+			url += "compactRows=" + encodeURIComponent(compactRows ? "true" : "false") + "&";
+		if (showPromo !== undefined)
+			url += "showPromo=" + encodeURIComponent(showPromo ? "true" : "false") + "&";
 		url += "region=" + encodeURIComponent(region);
 		const response = await fetch(url);
 		return await response.json();

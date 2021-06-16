@@ -1,38 +1,35 @@
 msgid "asset_language"
-msgstr "nl"
-
-msgid "subtitle_offset"
-msgstr "30"
+msgstr "de"
 
 msgid "hello"
-msgstr "Hi, %s!"
+msgstr "Hello, %s!"
 
 msgid "page_coupons"
-msgstr "Jouw Coupons"
+msgstr "Your Coupons"
 
 msgid "share"
-msgstr "Coupon hemel\n%s voor %s\n"
+msgstr "Coupons over cash.\n%s for %s\n"
 
 msgid "coupon_restaurants"
-msgstr "Deelnemende Restaurants"
+msgstr "Participating Restaurants"
 
 msgid "redeembtn"
-msgstr "Inwisselen"
+msgstr "Redeem"
 
 msgid "redeembtn_close"
-msgstr "Terug"
+msgstr "Ready"
 
 msgid "coupon_top_title"
-msgstr "Laat alsjeblieft de code aan de kassa zien."
+msgstr "Please show code at the till"
 
 msgid "switch_to_ean"
-msgstr "EAN-Code"
+msgstr "Switch to EAN Code"
 
 msgid "switch_to_qr"
-msgstr "QR-Code"
+msgstr "Switch to QR code"
 
 msgid "switch_to_next"
-msgstr "Verander het type code"
+msgstr "Alternativen Codetyp zeigen"
 
 msgid "filter_title"
 msgstr "Filter"
@@ -41,28 +38,28 @@ msgid "reset_filter"
 msgstr "reset"
 
 msgid "apply_filter"
-msgstr "sluit"
+msgstr "close"
 
 msgid "promo_share"
-msgstr "Wij hebben iets nieuws, jij hebt honger.\n"
+msgstr "We've got the news. You've got the appetite.\n"
 
 msgid "page_country"
-msgstr "Selecteer jouw land"
+msgstr "Country Selection"
 
 msgid "page_country_subtitle"
-msgstr "Meerdere talen. Zelfde smaak."
+msgstr "Various languages. Same taste."
 
 msgid "ex_filter_inactive"
-msgstr "Show verlopen"
+msgstr "Reveal expired"
 
 msgid "ex_filter_promo"
 msgstr "Show promos"
 
 msgid "ex_name_prompt"
-msgstr "Voer een nieuwe naam in:"
+msgstr "Enter new name:"
 
 msgid "ex_add_to_homescreen"
-msgstr "Toevoegen aan startscherm"
+msgstr "Add to homescreen"
 
 msgid "ex_add_to_homescreen_cancel"
-msgstr "Annuleren"
+msgstr "Cancel"
