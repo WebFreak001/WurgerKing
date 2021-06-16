@@ -44,7 +44,7 @@ struct Coupon
 	int upsell_coupon_id;
 	Coupon.UpsellCoupon[] upsell_coupons;
 	bool hidden, secret;
-	bool _active;
+	bool _active, _promo;
 
 @ignore:
 	static MongoCollection collection;
@@ -72,6 +72,7 @@ struct APICoupon
 	int[] category_ids;
 	int upsell_coupon_id;
 	Coupon.UpsellCoupon[] upsell_coupons;
+	bool _promo;
 
 @ignore:
 	Coupon convert()
@@ -97,6 +98,7 @@ struct APICoupon
 		ret.categories = category_ids;
 		ret.upsell_coupon_id = upsell_coupon_id;
 		ret.upsell_coupons = upsell_coupons;
+		ret._promo = _promo;
 		return ret;
 	}
 }

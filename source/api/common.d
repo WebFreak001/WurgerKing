@@ -126,6 +126,7 @@ auto byRows(Tiles)(Tiles tiles)
 		Tiles tiles;
 		// longer than possible 4 because of hidden items
 		Tile[16] row;
+		enum maxRowSpace = 4;
 		int rowLength = 0;
 		Tile[] front;
 
@@ -150,9 +151,9 @@ auto byRows(Tiles)(Tiles tiles)
 			row[0] = tiles.front;
 			tiles.popFront;
 			int sum = row[0].effectiveWidth;
-			while (sum < 4 && rowLength < 4 && !tiles.empty)
+			while (sum < maxRowSpace && rowLength < maxRowSpace && !tiles.empty)
 			{
-				if (sum + tiles.front.effectiveWidth > 4)
+				if (sum + tiles.front.effectiveWidth > maxRowSpace)
 					break;
 				row[rowLength++] = tiles.front;
 				tiles.popFront;
