@@ -31,7 +31,7 @@ void main()
 {
 	auto settings = new HTTPServerSettings;
 	settings.port = 3000;
-	settings.bindAddresses = ["::1", "0.0.0.0"];
+	settings.bindAddresses = ["::", "0.0.0.0"];
 
 	auto db = connectMongoDB("mongodb://127.0.0.1").getDatabase("wurgerking");
 
