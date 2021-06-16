@@ -8,6 +8,7 @@ html(lang="de")
 		meta(http-equiv="Content-Security-Policy", content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://api.burgerking.de; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'nonce-" ~ nonce ~ "'")
 		title Würger King - Web Slurger
 		link(rel="manifest", href="/manifest.json")
+		link(rel="shortcut icon", type="image/png", href="/logo/bk192.png")
 		meta(name="format-detection", content="telephone=no")
 		link(rel="apple-touch-icon", href="/logo/bk512.png")
 		link(rel="apple-touch-startup-image", href="/logo/bk512.png")
