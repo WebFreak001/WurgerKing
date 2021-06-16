@@ -18,14 +18,14 @@ import vibe.db.mongo.cursor;
 class PublicAPIImpl : PublicAPI
 {
 	Coupon[][] getCoupons(string region, int[] filterCategories = null,
-			bool onlyActive = true, bool hideExpired = false, int limit = 100,
+			bool onlyActive = true, bool hideExpired = false, int limit = 250,
 			bool allGeo = false, int[] filterIds = null, bool mybk = false,
 			bool compactRows = false, bool showPromo = true) @safe
 	{
 		if (limit < 1)
 			limit = 1;
-		else if (limit > 100)
-			limit = 100;
+		else if (limit > 250)
+			limit = 250;
 
 		Bson[string] query;
 		query["_region"] = Bson(region);
@@ -59,6 +59,20 @@ class PublicAPIImpl : PublicAPI
 			proxyImages(ret.images);
 			return ret;
 		}).array;
+
+		scope bool[int] foundChildReferences;
+		foreach (ref coupon; ret)
+		{
+			if (coupon.hidden)
+				continue;
+			if (!coupon.upsell_coupon_id.isNull)
+				foundChildReferences[coupon.upsell_coupon_id.get] = true;
+			foreach (upsell; coupon.upsell_coupons)
+				foundChildReferences[upsell.id] = true;
+		}
+
+		foreach (ref coupon; ret)
+			coupon._hasParent = foundChildReferences.get(coupon.id, false);
 
 		if (compactRows)
 			ret = ret.compactRows;

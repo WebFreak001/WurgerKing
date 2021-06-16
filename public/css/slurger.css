@@ -620,14 +620,14 @@ footer.bottombar .right .action .badge {
 	padding: 1.5rem 0;
 }
 
+.tile.secret {
+	opacity: 0.6;
+}
+
 .tile.inactive {
 	opacity: 0.8;
 }
 
 .tile.inactive.old {
 	opacity: 0.4;
-}
-
-.tile.secret {
-	outline: 2px solid lime;
 }

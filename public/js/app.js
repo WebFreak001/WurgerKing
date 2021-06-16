@@ -1264,9 +1264,10 @@ Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCa
                                 if (diff > 30 * 24 * 60 * 60 * 1000)
                                     td.classList.add("old");
                             }
-                            if (cell.hidden && !cell.secret)
+                            var isObtainable = !cell.hidden || cell._hasParent;
+                            if (cell.hidden && !cell.secret && isObtainable)
                                 return "continue";
-                            if (cell.secret)
+                            if (cell.secret || !isObtainable)
                                 td.classList.add("secret");
                             var content = renderCouponTile(td, cell);
                             content.addEventListener("click", couponClickHandler);

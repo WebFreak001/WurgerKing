@@ -45,6 +45,7 @@ interface Coupon extends TileCommons {
 	hidden: boolean;
 	secret: boolean;
 	_active: boolean;
+	_hasParent: boolean;
 }
 
 interface Promo extends ItemCommons {

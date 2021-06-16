@@ -6,6 +6,7 @@ import core.time;
 
 import std.algorithm;
 import std.array;
+import std.typecons;
 
 import vibe.inet.url;
 import vibe.data.serialization;
@@ -41,10 +42,10 @@ struct Coupon
 	int[] categories;
 	bool myBkOnly;
 	bool myBkOnetime;
-	int upsell_coupon_id;
+	Nullable!int upsell_coupon_id;
 	Coupon.UpsellCoupon[] upsell_coupons;
 	bool hidden, secret;
-	bool _active, _promo;
+	bool _active, _promo, _hasParent;
 
 @ignore:
 	static MongoCollection collection;
@@ -70,7 +71,7 @@ struct APICoupon
 	string subline;
 	string image_url;
 	int[] category_ids;
-	int upsell_coupon_id;
+	Nullable!int upsell_coupon_id;
 	Coupon.UpsellCoupon[] upsell_coupons;
 	bool _promo;
 
