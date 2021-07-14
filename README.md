@@ -1,10 +1,10 @@
 # Würger King
 
-An unofficial free and open source cross-platform proxy server & web UI for the Burger King app in Germany. (coupons only support Germany due to API changes)
+An unofficial free and open source cross-platform proxy server & web UI for the Burger King® app in Germany. (coupons only support Germany due to API changes)
 
 This app can be used on old smartphones and unsupported operating systems and offers near full functionality for promotions and coupons.
 
-The app is not affiliated with Burger King in any way and usage is not allowed in any way not allowed by the terms of the Burger King (Germany) app.
+The app is not affiliated with Burger King® in any way and usage is not allowed in any way not allowed by the terms of the Burger King® (Germany) app.
 
 It is designed to be fast and lightweight and only required a browser to function.
 
@@ -67,7 +67,7 @@ in your mongodb database to update old entries. Otherwise all old data will be i
 
 ---
 
-This app is not affiliated with Burger King, Burger King Deutschland GmbH or any other third parties.
+This app is not affiliated with Burger King®, Burger King Deutschland GmbH or any other third parties.
 
 It is solely made as a project to research web app design based on a real usecase with the goal of offering wider availability for the app to older smartphones and devices with unsupported operating systems.
 
