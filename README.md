@@ -8,7 +8,9 @@ The app is not affiliated with Burger King® in any way and usage is not allowed
 
 It is designed to be fast and lightweight and only required a browser to function.
 
-This project is heavily inspired by [Slurger](https://github.com/max1220/slurger4) and builds on top of their previous work.
+This project started inspired by [Slurger](https://github.com/max1220/slurger4) and builds on top of their previous work.
+
+Furthermore this is now a webapp alternative for the [Better King](https://github.com/BetterKingBot/BKCouponCrawler) Telegram bot. You can use the Telegram bot for notifications and other features as well as the lightest possible mobile data experience.
 
 The web-facing part is licensed GPLv3. Server and other parts are licensed under the MIT license. See [LICENSE.md](LICENSE.md) for more information.
 
