@@ -17,6 +17,7 @@ Extra features:
 - more pretty coupons page: there will almost never be any gaps between coupons, no matter how you sort
 - more coupon filters (view historical coupons)
 - shows coupon count
+- shows paper coupons
 
 Planned/TODO:
 

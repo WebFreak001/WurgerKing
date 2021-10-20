@@ -30,6 +30,9 @@ function clickTile(tile: Tile) {
 		case "menuGeneric":
 			pages.openGeneric(tile);
 			break;
+		case "_wurgerking_store_coupons":
+			pages.openStoreCoupons(tile);
+			break;
 		default:
 			console.error("Unrecognized tile link type: " + type);
 			return;

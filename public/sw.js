@@ -1,4 +1,4 @@
-const targetCache = "v3.5.0";
+const targetCache = "v3.6.0";
 const allowedCaches = [targetCache, "static-v1"];
 
 self.addEventListener('install', function (event) {

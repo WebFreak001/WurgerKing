@@ -13,13 +13,21 @@ block content
 					- foreach (tile; row)
 						- string bg = tile.images.bgColor.length == 6 ? text("background-color:#", tile.images.bgColor) : null;
 						.tile(style=bg, width=tile.dimension.width, height=tile.dimension.height,
-								data-type=tile.type, data-json=tile.data)
-							.content.wonky
+								data-type=tile.type, data-json=tile.data, title=tile.title)
+							.content
 								- if (tile.type == "menuKingfinder")
 									img(src="/img/kingfinder.png")
-								- else foreach (image; [tile.images.bgImage, tile.images.fgImage])
-									- if (!image.isNull)
-										img(src=proxyImage(image.get.url))
+								- else
+									- bool first = true;
+									- foreach (image; [tile.images.bgImage, tile.images.fgImage])
+										- if (!image.isNull)
+											- if (first)
+												img(src=proxyImage(image.get.url), alt=tile.title)
+												- first = false;
+											- else
+												img(src=proxyImage(image.get.url))
+									- if (first)
+										span.fallback_title= tile.title
 		footer
 			.info
 			.flag(class="flag-#{region[1 .. 3]}")

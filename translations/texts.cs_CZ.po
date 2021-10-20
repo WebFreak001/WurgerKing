@@ -7,6 +7,9 @@ msgstr "Ahoj, %s!"
 msgid "page_coupons"
 msgstr "Vaše kupony"
 
+msgid "etc_coupons"
+msgstr "More Coupons"
+
 msgid "share"
 msgstr "Slevové nebe.\n%s za %s\n"
 

@@ -10,6 +10,9 @@ msgstr "Hi, %s!"
 msgid "page_coupons"
 msgstr "Jouw Coupons"
 
+msgid "etc_coupons"
+msgstr "More Coupons"
+
 msgid "share"
 msgstr "Coupon hemel\n%s voor %s\n"
 

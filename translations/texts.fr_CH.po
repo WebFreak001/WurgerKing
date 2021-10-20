@@ -7,6 +7,9 @@ msgstr "Bonjour, %s!"
 msgid "page_coupons"
 msgstr "Vos Coupons"
 
+msgid "etc_coupons"
+msgstr "More Coupons"
+
 msgid "share"
 msgstr "Paradis de bons.\n%s pour %s\n"
 

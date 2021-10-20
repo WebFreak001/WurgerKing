@@ -71,6 +71,21 @@ interface Promo extends ItemCommons {
 	storesFilter?: string;
 }
 
+interface StoreCoupon {
+	humanCode: string;
+	promoCode: string;
+	name: string;
+	prices: number[];
+	stores: number[];
+	product: {
+		id: number,
+		image_url: string,
+		availability_type: string
+	}
+}
+
+type StoreCouponList = { [index: string]: StoreCoupon[] };
+
 const api = {
 	async getCoupons(
 		filterCategories?: number[],
@@ -127,6 +142,12 @@ const api = {
 		if (onlyActive !== undefined)
 			url += "onlyActive=" + encodeURIComponent(onlyActive ? "true" : "false") + "&";
 		url += "region=" + encodeURIComponent(region);
+		const response = await fetch(url);
+		return await response.json();
+	},
+	async getStoreCoupons():
+		Promise<StoreCouponList> {
+		var url = "/api/store_coupons?lang=" + encodeURIComponent(region.substr(0, 2));
 		const response = await fetch(url);
 		return await response.json();
 	},

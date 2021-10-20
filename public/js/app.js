@@ -110,6 +110,22 @@ var api = {
                 }
             });
         });
+    },
+    getStoreCoupons: function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var url, response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        url = "/api/store_coupons?lang=" + encodeURIComponent(region.substr(0, 2));
+                        return [4 /*yield*/, fetch(url)];
+                    case 1:
+                        response = _a.sent();
+                        return [4 /*yield*/, response.json()];
+                    case 2: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
     }
 };
 function querySelectorOrThrow(selector, message) {
@@ -331,6 +347,9 @@ function clickTile(tile) {
             break;
         case "menuGeneric":
             pages.openGeneric(tile);
+            break;
+        case "_wurgerking_store_coupons":
+            pages.openStoreCoupons(tile);
             break;
         default:
             console.error("Unrecognized tile link type: " + type);
@@ -1726,6 +1745,167 @@ function renderPromo(div, promo) {
         insertHTMLInto(promo.footnote, footnote);
     }
 }
+///<reference path="pages.ts" />
+///<reference path="../commons.ts" />
+var numTotalStores = 50;
+var storeCouponsFetchDate = new Date();
+var storeCoupons = null;
+Pages.prototype.openStoreCoupons = function (tile) {
+    var subtitle = new Image();
+    subtitle.src = "/img/subtitle_coupons_" + translations.asset_language + ".png";
+    var filterLikes = false;
+    function refreshItems() {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(!storeCoupons || new Date().getTime() - storeCouponsFetchDate.getTime() > 60 * 60 * 1000)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, api.getStoreCoupons()];
+                    case 1:
+                        storeCoupons = _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        pages.updatePaperCoupons(div, storeCoupons, filterLikes);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    }
+    var div = this.openTitledGeneric("paper-coupons", tile, translations.etc_coupons, true, undefined, function (title) {
+        var img = document.createElement("img");
+        img.classList.add("subtitle");
+        img.src = subtitle.src;
+        title.appendChild(img);
+    }, [
+        {
+            icon: "/img/icons/heart.svg",
+            callback: function (e) {
+                filterLikes = !filterLikes;
+                if (this.children[0].tagName == "IMG")
+                    this.children[0].src = filterLikes ? "/img/icons/heart_filled.svg" : "/img/icons/heart.svg";
+                else
+                    console.error("Expected ", this.children[0], " to be an image!");
+                refreshItems();
+            }
+        },
+        {
+            icon: "/img/icons/search.svg",
+            callback: function (e) {
+            }
+        }
+    ]);
+    div.classList.add("paperlist");
+    refreshItems();
+};
+Pages.prototype.updatePaperCoupons = function (div, storeCoupons, onlyLikes) {
+    while (div.lastChild)
+        div.removeChild(div.lastChild);
+    var backdrop = document.createElement("div");
+    backdrop.className = "backdrop";
+    backdrop.style.display = "none";
+    div.appendChild(backdrop);
+    function renderStoreCoupon(coupon) {
+        var likeId = "pp" + coupon.promoCode;
+        if (onlyLikes && !likes.check(likeId))
+            return;
+        var paper = document.createElement("div");
+        paper.className = "papercoupon";
+        function make(elem, name, textContent) {
+            var item = document.createElement(elem);
+            item.className = name;
+            function addChild(c) {
+                if (typeof c == "object" && c instanceof HTMLElement)
+                    item.appendChild(c);
+                else
+                    item.appendChild(document.createTextNode(c.toString()));
+            }
+            if (Array.isArray(textContent))
+                textContent.forEach(addChild);
+            else
+                addChild(textContent);
+            paper.appendChild(item);
+            return item;
+        }
+        function add(elem, name, textContent) {
+            var item = make.apply(null, arguments);
+            paper.appendChild(item);
+            return item;
+        }
+        function formatPrice(d) {
+            return (d / 100).toFixed(2).replace('.', ',') + " €";
+        }
+        add("img", "image", []).src = coupon.product.image_url;
+        add("span", "humancode", coupon.humanCode);
+        add("span", "plu", coupon.promoCode);
+        var plus = coupon.name.indexOf('+');
+        if (plus == -1)
+            add("span", "name", coupon.name);
+        else {
+            add("span", "firstname", coupon.name.substr(0, plus).trim());
+            add("span", "subname", coupon.name.substr(plus).trim());
+        }
+        var minPrice = coupon.prices.reduce(function (a, b) { return Math.min(a, b); });
+        var maxPrice = coupon.prices.reduce(function (a, b) { return Math.max(a, b); });
+        if (minPrice == maxPrice)
+            add("span", "fixed-price" + (minPrice >= 1000 ? " two-digit" : ""), [
+                make("span", "euro", Math.floor(minPrice / 100)),
+                make("span", "cents", minPrice % 100),
+                make("span", "eurosign", "\u20ac"),
+            ]);
+        else
+            add("span", "variable-price hide_in_fullscreen", formatPrice(minPrice) + " ­\u002d " + formatPrice(maxPrice));
+        var plu_qr = add("canvas", "plu-qr", []);
+        plu_qr.width = plu_qr.height = 21 * 12;
+        new QRious({
+            element: plu_qr,
+            value: coupon.promoCode,
+            size: plu_qr.width,
+            backgroundAlpha: 0,
+            foreground: "black",
+            level: "L" // L, M, Q, H
+        });
+        if (coupon.stores.length < numTotalStores)
+            add("span", "store-support hide_in_fullscreen", coupon.stores.length + " / " + numTotalStores + " stores");
+        var like = document.createElement("img");
+        like.className = "like hide_in_fullscreen no_click";
+        like.src = likes.check(likeId) ? "/img/icons/heart_filled.svg" : "/img/icons/heart.svg";
+        like.addEventListener("click", function () {
+            this.src = likes.toggle(likeId) ? "/img/icons/heart_filled.svg" : "/img/icons/heart.svg";
+        });
+        paper.appendChild(like);
+        paper.addEventListener("click", function (e) {
+            var t = e.target;
+            while (t && t != paper) {
+                if (t.classList.contains("no_click"))
+                    return;
+                t = t.parentElement;
+            }
+            paper.classList.add("fullscreen");
+            backdrop.style.display = "";
+            backdrop.onclick = function () {
+                paper.classList.remove("fullscreen");
+                backdrop.style.display = "none";
+            };
+        });
+        div.appendChild(paper);
+    }
+    var pairs = [];
+    for (var group in storeCoupons) {
+        if (storeCoupons.hasOwnProperty(group)) {
+            pairs.push({ key: group, value: storeCoupons[group] });
+        }
+    }
+    pairs.sort(function (a, b) { return b.value.length - a.value.length; });
+    console.log(pairs);
+    for (var i_20 = 0; i_20 < pairs.length; i_20++) {
+        var header = document.createElement("h2");
+        header.textContent = pairs[i_20].key;
+        div.appendChild(header);
+        for (var j = 0; j < pairs[i_20].value.length; j++) {
+            renderStoreCoupon(pairs[i_20].value[j]);
+        }
+    }
+};
 /*!
  * Flickity PACKAGED v2.2.1
  * Touch, responsive, flickable carousels

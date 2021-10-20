@@ -21,7 +21,9 @@ enum StoreItemType
 	menu,
 	product,
 	customization,
-	coupon
+	coupon,
+
+	internalMeta = 100
 }
 
 struct StoreEntry
@@ -30,6 +32,7 @@ struct StoreEntry
 }
 
 // list of stores that support mobile ordering (the needed API to expose coupons)
+// if changing, change storecoupons.ts `numTotalStores = 50` variable to the new length.
 static immutable int[] storeIDs = [
 	1001, 1010, 1024, 1033, 1044, 1059, 11041, 11674, 11742, 11985, 12267,
 	12971, 13237, 13948, 16017, 16018, 3057, 382, 393, 403, 409, 4108, 437, 441,
@@ -41,6 +44,19 @@ enum storeFormat = "https://mo.burgerking-app.eu/api/v2/stores/%d/menu";
 void updateStores()
 {
 	enum ttl = 4.hours;
+	enum metaVersion = 1;
+
+	Bson meta = StoreEntry.collection.findOne(["_type": cast(int)StoreItemType.internalMeta]);
+	if (meta.type == Bson.Type.object && meta["version"].get!int == metaVersion
+		&& SysTime(meta["lastUpdate"].get!long) + ttl > Clock.currTime())
+		return;
+
+	scope (success)
+		StoreEntry.collection.update(["_type": cast(int)StoreItemType.internalMeta], [
+			"_type": Bson(cast(int)StoreItemType.internalMeta),
+			"version": Bson(metaVersion),
+			"lastUpdate": Bson(Clock.currStdTime)
+		], UpdateFlags.upsert);
 
 	scope string[] processedLanguages;
 
@@ -281,6 +297,8 @@ unittest
 				logInfo("%s has unconstant prices: %s", coupon.humanCode, coupon.prices.array.sort!"a<b".uniq);
 			if (coupon.stores.length != storeIDs.length)
 				logInfo("%s only supported by %s / %s stores", coupon.humanCode, coupon.stores.length, storeIDs.length);
+			if (coupon.product.availability_type != "available")
+				logInfo("%s unexpected availability: %s", coupon.humanCode, coupon.product.availability_type);
 		}
 	}
 }

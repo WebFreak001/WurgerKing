@@ -10,6 +10,9 @@ msgstr "Hej, %s!"
 msgid "page_coupons"
 msgstr "Dina kuponger"
 
+msgid "etc_coupons"
+msgstr "More Coupons"
+
 msgid "share"
 msgstr "Kupongparadiset\n%s för %s\n"
 

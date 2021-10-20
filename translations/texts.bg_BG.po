@@ -7,6 +7,9 @@ msgstr "Здравейте %s!"
 msgid "page_coupons"
 msgstr "Coupons"
 
+msgid "etc_coupons"
+msgstr "More Coupons"
+
 msgid "share"
 msgstr "Coupon share.\n%s für %s\n"
 

@@ -159,6 +159,13 @@ void index(HTTPServerRequest req, HTTPServerResponse res)
 		~ "; var translations = " ~ serializeToJsonString(translations);
 	string nonce = uniform!ulong.to!string(36);
 
-	auto tiles = getBKTiles(region).byRows;
+	auto rawTiles = getBKTiles(region);
+	Tile storeCouponsTile = Tile(Dimension(4, 2));
+	storeCouponsTile.id = -1;
+	storeCouponsTile.title = translations["etc_coupons"];
+	storeCouponsTile.type = "_wurgerking_store_coupons";
+	rawTiles ~= storeCouponsTile;
+	auto tiles = rawTiles.byRows;
+
 	res.render!("home.dt", tiles, region, lang, translationsScript, nonce);
 }

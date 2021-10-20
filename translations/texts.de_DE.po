@@ -7,6 +7,9 @@ msgstr "Hallo, %s!"
 msgid "page_coupons"
 msgstr "Deine Coupons"
 
+msgid "etc_coupons"
+msgstr "Weitere Coupons"
+
 msgid "share"
 msgstr "Gutscheine statt Geldscheine.\n%s für %s\n"
 

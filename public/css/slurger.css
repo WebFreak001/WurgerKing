@@ -14,21 +14,6 @@ body {
 	margin: auto;
 }
 
-.wonky {
-	/* -webkit-mask-box-image: url(/img/bordermask.svg) 8 round;
-	-webkit-mask-box-image-width: 3%; */
-	mask-border: url(/img/bordermask.svg) 8 round;
-	mask-border-width: 3%;
-	transform: scale(1.015);
-}
-
-.wonky-bottom {
-	/* -webkit-mask-box-image: url(/img/bordermask-bottom.svg) 8 round;
-	-webkit-mask-box-image-width: 0.4rem; */
-	mask-border: url(/img/bordermask-bottom.svg) 8 round;
-	mask-border-width: 0.4rem;
-}
-
 .branded, .bigbranded {
 	position: relative;
 	overflow: hidden;
@@ -242,7 +227,7 @@ body {
 }
 
 .titled > .title, .highlit-panel h3, .highlit-panel h4, .highlit-panel p.price, .redeembtn, .bigtile .qrcode .code,
-.filter-settings h4, .upsell_arg {
+.filter-settings h4, .upsell_arg, .paperlist {
 	font-family: 'Passion One', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 	text-transform: uppercase;
 	font-size: 1.75rem;
@@ -614,6 +599,17 @@ footer.bottombar .right .action .badge {
 	opacity: 0.4;
 }
 
+.tile img, .tile span.fallback_title {
+	text-align: center;
+	line-height: 3em;
+	font-size: 2rem;
+}
+
+.tile span.fallback_title {
+	display: inline-block;
+	width: 100%;
+}
+
 .upsell_arg.slideup-popup {
   background-color: white;
 	padding-top: 12pt;
@@ -703,4 +699,209 @@ footer.bottombar .right .action .badge {
 .upsell_arg.slideup-popup .buttons .deny {
 	color: #f7a600;
 	background-color: white;
+}
+
+.paperlist {
+	font-size: 6vw;
+}
+
+.paperlist > h2 {
+	padding: 0 1em;
+}
+
+.papercoupon {
+	display: block;
+	margin: 0 auto;
+	background-color: #fcfddd;
+	max-width: 98vw;
+	position: relative;
+	outline: 0.5vw dashed #d0d0b4;
+	overflow: hidden;
+}
+
+.papercoupon:before {
+	display: block;
+	content: '';
+	padding-top: 53%;
+}
+
+.papercoupon > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.papercoupon > .humancode {
+	font-size: 1.8em;
+	top: 4%;
+	left: 4%;
+}
+
+.papercoupon > .name,
+.papercoupon > .firstname {
+	font-size: 0.8em;
+	left: 20%;
+	top: 4%;
+	width: 60%;
+}
+
+.papercoupon > .firstname {
+	width: 80%;
+}
+
+.papercoupon > .subname {
+	font-size: 0.5em;
+	left: 20%;
+	top: 14%;
+	width: 60%;
+}
+
+.papercoupon > .image {
+	height: 70%;
+	top: 19%;
+	left: 20%;
+	right: 0;
+	max-width: 80%;
+	margin: auto;
+}
+
+.papercoupon > .plu {
+	font-size: 0.7em;
+	font-weight: normal;
+	top: unset;
+	bottom: 4%;
+	left: 20%;
+	transform-origin: bottom left;
+	transform: rotate(-90deg) translateY(1em);
+}
+
+.papercoupon > .plu:before {
+	content: 'PLU:';
+}
+
+.papercoupon > .fixed-price {
+	left: unset;
+	right: 4%;
+	top: 10%;
+	width: 15%;
+	background-color: #f25630;
+	border-radius: 100%;
+	color: #fcfddd;
+}
+
+.papercoupon > .fixed-price:before {
+	content: '';
+	display: block;
+	padding-top: 100%;
+}
+
+.papercoupon > .fixed-price > span {
+display: block;
+position: absolute;
+}
+
+.papercoupon > .fixed-price > .euro {
+	font-size: 1.5em;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	height: 0;
+	margin: auto;
+	line-height: 0;
+	width: 50%;
+	text-align: right;
+}
+
+.papercoupon > .fixed-price > .cents {
+	font-size: 0.75em;
+	top: -0.75em;
+	left: 50%;
+	bottom: 0;
+	height: 0;
+	margin: auto;
+	line-height: 0;
+	width: 40%;
+	text-align: left;
+}
+
+.papercoupon > .fixed-price > .eurosign {
+	font-size: 0.7em;
+	top: 0.75em;
+	left: 55%;
+	bottom: 0;
+	height: 0;
+	margin: auto;
+	line-height: 0;
+	width: 40%;
+	text-align: left;
+}
+
+.papercoupon > .fixed-price.two-digit > .euro {
+	width: 62%;
+}
+
+.papercoupon > .fixed-price.two-digit > .eurosign,
+.papercoupon > .fixed-price.two-digit > .cents {
+	left: 62%;
+}
+
+.papercoupon > .store-support {
+	top: unset;
+	left: unset;
+	right: 14%;
+	bottom: 4%;
+	font-size: 1rem;
+}
+
+.papercoupon > .plu-qr {
+	top: unset;
+	bottom: 0;
+	left: 0;
+	background: white;
+	padding: 1vw;
+	box-sizing: border-box;
+	width: 20%;
+}
+
+.papercoupon > .variable-price {
+	top: unset;
+	left: unset;
+	bottom: 4%;
+	right: 14%;
+}
+
+.papercoupon > .like {
+	top: unset;
+	left: unset;
+	bottom: 4%;
+	right: 4%;
+	width: 8%;
+}
+
+.paperlist .backdrop {
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	width: 100%;
+	height: 100%;
+	background-color: #333;
+	z-index: 1000;
+}
+
+.paperlist .fullscreen {
+	z-index: 1001;
+	position: fixed;
+	top: 50%;
+	left: 0;
+	right: 0;
+	margin: auto;
+	transform: translateY(-50%);
+}
+
+.paperlist .fullscreen .hide_in_fullscreen {
+	display: none;
 }

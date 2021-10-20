@@ -134,6 +134,14 @@ class PublicAPIImpl : PublicAPI
 
 	StoreCoupon[][string] getStoreCoupons(string lang = "de")
 	{
-		return findStoreCoupons(lang);
+		auto ret = findStoreCoupons(lang);
+		foreach (group, coupons; ret)
+		{
+			foreach (ref coupon; coupons)
+			{
+				coupon.product.image_url = proxyImage(coupon.product.image_url);
+			}
+		}
+		return ret;
 	}
 }

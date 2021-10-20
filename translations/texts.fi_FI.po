@@ -10,6 +10,9 @@ msgstr "Hei %s!"
 msgid "page_coupons"
 msgstr "Kuponkisi"
 
+msgid "etc_coupons"
+msgstr "More Coupons"
+
 msgid "share"
 msgstr "Alennuskoodi voittaa käteisen\n%s %s:lle\n"
 
