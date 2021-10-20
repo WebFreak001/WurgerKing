@@ -5,6 +5,7 @@ import api.public_.definition;
 import api.v2.flags;
 import api.v2.promos;
 import api.new_v2.coupons;
+import api.new_v2.stores;
 
 import std.algorithm;
 import std.array;
@@ -129,5 +130,10 @@ class PublicAPIImpl : PublicAPI
 					return Json(ret);
 				}).array;
 		return ret;
+	}
+
+	StoreCoupon[][string] getStoreCoupons(string lang = "de")
+	{
+		return findStoreCoupons(lang);
 	}
 }

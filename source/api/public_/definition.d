@@ -2,6 +2,7 @@ module api.public_.definition;
 
 import api.v2.promos;
 import api.new_v2.coupons;
+import api.new_v2.stores;
 
 import vibe.data.json;
 
@@ -13,4 +14,5 @@ interface PublicAPI
 			bool compactRows = false, bool showPromo = true) @safe;
 	Promo[] getPromos(string region, string filterStore = null, bool onlyActive = true, int limit = 100) @safe;
 	Json[][string] getFlags(string region, string[] flags, bool onlyActive = true);
+	StoreCoupon[][string] getStoreCoupons(string lang = "de");
 }

@@ -6,10 +6,12 @@ import api.v2.flags;
 import api.v2.promos;
 import api.v3.tiles;
 import api.new_v2.coupons;
+import api.new_v2.stores;
 
 import std.algorithm;
 import std.base64;
 import std.digest.sha;
+import std.datetime.systime;
 import std.random;
 import std.string;
 import std.traits;
@@ -43,6 +45,9 @@ void main()
 	Promo.collection.deleteIndex("id_1");
 	Promo.collection.ensureIndex([tuple("id", 1), tuple("_region", 1)], IndexFlags.unique);
 
+	StoreEntry.collection = db["stores"];
+	StoreEntry.collection.ensureIndex([tuple("_store", 1), tuple("_type", 1), tuple("id", 1), tuple("_lang", 1)], IndexFlags.unique);
+
 	auto router = new URLRouter;
 
 	router.registerRestInterface(new PublicAPIImpl(), "/api");
@@ -73,12 +78,23 @@ void main()
 
 		updateCoupons();
 		updatePromos();
+		updateStores();
 
 		fetchFlags(db);
 	});
 
+	SysTime nextDay = Clock.currTime();
+	nextDay.hour = 0;
+	nextDay.minute = 0;
+	nextDay.second = 0;
+	nextDay += 1.days;
+	auto waitTimeTilMidnight = nextDay - Clock.currTime();
+
 	setTimer(80.minutes, { updateCoupons(); }, true);
 	setTimer(130.minutes, { updatePromos(); }, true);
+	setTimer(waitTimeTilMidnight, {
+		setTimer(8.hours, { updateStores(); }, true);
+	}, false);
 	setTimer(2.days, { fetchFlags(db); }, true);
 
 	runApplication();
