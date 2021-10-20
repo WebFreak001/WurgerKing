@@ -1748,6 +1748,7 @@ function renderPromo(div, promo) {
 ///<reference path="pages.ts" />
 ///<reference path="../commons.ts" />
 var numTotalStores = 50;
+var paperCouponLetter = 'A'; // replaces the coupon source letter with most coupons with this letter
 var storeCouponsFetchDate = new Date();
 var storeCoupons = null;
 Pages.prototype.openStoreCoupons = function (tile) {
@@ -1898,10 +1899,14 @@ Pages.prototype.updatePaperCoupons = function (div, storeCoupons, onlyLikes) {
     pairs.sort(function (a, b) { return b.value.length - a.value.length; });
     console.log(pairs);
     for (var i_20 = 0; i_20 < pairs.length; i_20++) {
+        if (i_20 == 0)
+            pairs[i_20].key = paperCouponLetter;
         var header = document.createElement("h2");
         header.textContent = pairs[i_20].key;
         div.appendChild(header);
         for (var j = 0; j < pairs[i_20].value.length; j++) {
+            if (i_20 == 0)
+                pairs[i_20].value[j].humanCode = paperCouponLetter + pairs[i_20].value[j].humanCode.substr(1);
             renderStoreCoupon(pairs[i_20].value[j]);
         }
     }

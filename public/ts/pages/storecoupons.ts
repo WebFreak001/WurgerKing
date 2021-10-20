@@ -7,6 +7,7 @@ interface Pages {
 }
 
 const numTotalStores = 50;
+const paperCouponLetter = 'A'; // replaces the coupon source letter with most coupons with this letter
 
 declare var QRious: any;
 
@@ -170,11 +171,15 @@ Pages.prototype.updatePaperCoupons = function (div: HTMLElement, storeCoupons: S
 
 	console.log(pairs);
 	for (let i = 0; i < pairs.length; i++) {
+		if (i == 0)
+			pairs[i].key = paperCouponLetter;
 		let header = document.createElement("h2");
 		header.textContent = pairs[i].key;
 		div.appendChild(header);
 
 		for (let j = 0; j < pairs[i].value.length; j++) {
+			if (i == 0)
+				pairs[i].value[j].humanCode = paperCouponLetter + pairs[i].value[j].humanCode.substr(1);
 			renderStoreCoupon(pairs[i].value[j]);
 		}
 	}
