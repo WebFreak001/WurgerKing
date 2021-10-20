@@ -144,13 +144,138 @@ Pages.prototype.openCoupons = function (tile?: Tile) {
 	});
 	itemsContainer.appendChild(promoToggle);
 
-	let div = this.openTitledGeneric("coupons", tile, translations.page_coupons, true, undefined, function () {
-		let title = div.parentElement!.querySelectorOrThrow(".title", true);
+	let div = this.openTitledGeneric("coupons", tile, translations.page_coupons, true, undefined, function (title) {
 		let img = document.createElement("img");
 		img.classList.add("subtitle");
 		img.style.marginBottom = "-" + parseFloat(translations.subtitle_offset || "0") * 0.3 + "px";
 		img.src = subtitle.src;
 		title.appendChild(img);
+
+		title.addEventListener("dblclick", function() {
+			let defaultCoupon: DebugCoupon = {
+				_active: true,
+				_hasParent: false,
+				_promo: false,
+				barcodes: [],
+				categories: [],
+				description: "Debug Coupon",
+				dimension: {
+					height: 1,
+					width: 1
+				},
+				footnote: "Debug Footnote",
+				from: null,
+				hidden: false,
+				id: 1000000,
+				images: {
+					bgColor: null,
+					bgImage: {
+						modified: 0,
+						url: ""
+					},
+					fgImage: null,
+					parallax: false
+				},
+				title: "Debug Title",
+				to: null,
+				price: "0,00 €",
+				_numericCode: "12345",
+				plu: "PLU",
+				secret: false,
+				myBkOnetime: false,
+				myBkOnly: false,
+				modified: 0,
+				upsell_coupon_id: null,
+				upsell_coupons: null,
+				_image: ""
+			};
+
+			let form = document.createElement("table");
+			form.className = "content";
+			for (let key in defaultCoupon) {
+				if (defaultCoupon.hasOwnProperty(key)) {
+					let value = (<any>defaultCoupon)[key];
+					if (typeof value != "object" && value !== null) {
+						let row = document.createElement("tr");
+						let name = document.createElement("th");
+						name.textContent = key;
+						row.appendChild(name);
+						let container = document.createElement("td");
+						let valueEditor = <HTMLInputElement>document.createElement("input");
+						if (typeof value == "boolean") {
+							valueEditor.type = "checkbox";
+							valueEditor.checked = value;
+							valueEditor.onchange = () => {
+								(<any>defaultCoupon)[key] = valueEditor.checked;
+							};
+						} else {
+							valueEditor.type = "text";
+							if (typeof value == "number")
+								valueEditor.pattern = "^[-+]?\d+(\.\d+)?$"
+							valueEditor.value = value;
+							valueEditor.onchange = () => {
+								if (typeof value == "number")
+									(<any>defaultCoupon)[key] = parseFloat(valueEditor.value);
+								else
+									(<any>defaultCoupon)[key] = valueEditor.value;
+							};
+						}
+						container.appendChild(valueEditor);
+						row.appendChild(container);
+						form.appendChild(row);
+					}
+				}
+			}
+
+			let editor = pages.openSlideup("upsell/debugeditor");
+			editor.classList.add("debug");
+
+			function hide() {
+				pages.back();
+				setTimeout(function() {
+					editor.parentElement?.removeChild(editor);
+				}, 150);
+			}
+
+			let buttons = document.createElement("div");
+			buttons.className = "buttons";
+
+			let denyButton = document.createElement("div");
+			denyButton.className = "deny";
+			denyButton.textContent = "Cancel";
+			denyButton.addEventListener("click", hide);
+			buttons.appendChild(denyButton);
+
+			let confirmButton = document.createElement("div");
+			confirmButton.className = "confirm";
+			confirmButton.textContent = "Create";
+			confirmButton.addEventListener("click", () => {
+				hide();
+				defaultCoupon.images.bgImage = {
+					modified: 0,
+					url: defaultCoupon._image
+				}
+				defaultCoupon.barcodes = [
+					{
+						type: "QR",
+						value: defaultCoupon._numericCode
+					},
+					{
+						type: "EAN-13",
+						value: "2" + defaultCoupon._numericCode + "0030086"
+					}
+				];
+				openCoupon(defaultCoupon);
+			})
+			buttons.appendChild(confirmButton);
+
+			let title = document.createElement("h1");
+			title.textContent = "Create debug coupon";
+
+			editor.appendChild(title);
+			editor.appendChild(form);
+			editor.appendChild(buttons);
+		});
 
 		div.parentElement!.appendChild(backdrop);
 		div.parentElement!.appendChild(settings);
@@ -656,7 +781,7 @@ function openCoupon(data: Coupon, tile?: HTMLElement) {
 		if (data.myBkOnetime) {
 			// TODO: countdown timer
 		}
-		else if (data.barcodes.length > 1)
+		else if (data.barcodes.length > 1 || (data.barcodes[0].value.length == 5 && data.barcodes[0].value != data.plu))
 			code.appendChild(codeLabel);
 
 		qr.appendChild(code);

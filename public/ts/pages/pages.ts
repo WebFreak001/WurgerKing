@@ -48,7 +48,7 @@ class Pages {
 		return div;
 	}
 
-	openTitledGeneric(name: string, tile: HTMLElement | undefined, title: string, withBottomBar: boolean, animationDone?: Function, titleAnimationDone?: Function, actions?: PageAction[]): HTMLDivElement {
+	openTitledGeneric(name: string, tile: HTMLElement | undefined, title: string, withBottomBar: boolean, animationDone?: Function, titleAnimationDone?: (titleDiv: HTMLDivElement) => any, actions?: PageAction[]): HTMLDivElement {
 		const titleDiv = document.createElement("div");
 		titleDiv.className = "title branded loading";
 		titleDiv.textContent = title;
@@ -59,7 +59,7 @@ class Pages {
 			pages.animation = setTimeout(function () {
 				titleDiv.classList.remove("animating");
 				titleDiv.classList.remove("loading");
-				if (titleAnimationDone) titleAnimationDone();
+				if (titleAnimationDone) titleAnimationDone(titleDiv);
 			}, 200);
 			if (animationDone) animationDone();
 		}, actions);

@@ -529,7 +529,7 @@ var Pages = /** @class */ (function () {
                 titleDiv.classList.remove("animating");
                 titleDiv.classList.remove("loading");
                 if (titleAnimationDone)
-                    titleAnimationDone();
+                    titleAnimationDone(titleDiv);
             }, 200);
             if (animationDone)
                 animationDone();
@@ -800,13 +800,134 @@ Pages.prototype.openCoupons = function (tile) {
         refreshItems();
     });
     itemsContainer.appendChild(promoToggle);
-    var div = this.openTitledGeneric("coupons", tile, translations.page_coupons, true, undefined, function () {
-        var title = div.parentElement.querySelectorOrThrow(".title", true);
+    var div = this.openTitledGeneric("coupons", tile, translations.page_coupons, true, undefined, function (title) {
         var img = document.createElement("img");
         img.classList.add("subtitle");
         img.style.marginBottom = "-" + parseFloat(translations.subtitle_offset || "0") * 0.3 + "px";
         img.src = subtitle.src;
         title.appendChild(img);
+        title.addEventListener("dblclick", function () {
+            var defaultCoupon = {
+                _active: true,
+                _hasParent: false,
+                _promo: false,
+                barcodes: [],
+                categories: [],
+                description: "Debug Coupon",
+                dimension: {
+                    height: 1,
+                    width: 1
+                },
+                footnote: "Debug Footnote",
+                from: null,
+                hidden: false,
+                id: 1000000,
+                images: {
+                    bgColor: null,
+                    bgImage: {
+                        modified: 0,
+                        url: ""
+                    },
+                    fgImage: null,
+                    parallax: false
+                },
+                title: "Debug Title",
+                to: null,
+                price: "0,00 €",
+                _numericCode: "12345",
+                plu: "PLU",
+                secret: false,
+                myBkOnetime: false,
+                myBkOnly: false,
+                modified: 0,
+                upsell_coupon_id: null,
+                upsell_coupons: null,
+                _image: ""
+            };
+            var form = document.createElement("table");
+            form.className = "content";
+            var _loop_1 = function (key) {
+                if (defaultCoupon.hasOwnProperty(key)) {
+                    var value_1 = defaultCoupon[key];
+                    if (typeof value_1 != "object" && value_1 !== null) {
+                        var row = document.createElement("tr");
+                        var name_1 = document.createElement("th");
+                        name_1.textContent = key;
+                        row.appendChild(name_1);
+                        var container = document.createElement("td");
+                        var valueEditor_1 = document.createElement("input");
+                        if (typeof value_1 == "boolean") {
+                            valueEditor_1.type = "checkbox";
+                            valueEditor_1.checked = value_1;
+                            valueEditor_1.onchange = function () {
+                                defaultCoupon[key] = valueEditor_1.checked;
+                            };
+                        }
+                        else {
+                            valueEditor_1.type = "text";
+                            if (typeof value_1 == "number")
+                                valueEditor_1.pattern = "^[-+]?\d+(\.\d+)?$";
+                            valueEditor_1.value = value_1;
+                            valueEditor_1.onchange = function () {
+                                if (typeof value_1 == "number")
+                                    defaultCoupon[key] = parseFloat(valueEditor_1.value);
+                                else
+                                    defaultCoupon[key] = valueEditor_1.value;
+                            };
+                        }
+                        container.appendChild(valueEditor_1);
+                        row.appendChild(container);
+                        form.appendChild(row);
+                    }
+                }
+            };
+            for (var key in defaultCoupon) {
+                _loop_1(key);
+            }
+            var editor = pages.openSlideup("upsell/debugeditor");
+            editor.classList.add("debug");
+            function hide() {
+                pages.back();
+                setTimeout(function () {
+                    var _a;
+                    (_a = editor.parentElement) === null || _a === void 0 ? void 0 : _a.removeChild(editor);
+                }, 150);
+            }
+            var buttons = document.createElement("div");
+            buttons.className = "buttons";
+            var denyButton = document.createElement("div");
+            denyButton.className = "deny";
+            denyButton.textContent = "Cancel";
+            denyButton.addEventListener("click", hide);
+            buttons.appendChild(denyButton);
+            var confirmButton = document.createElement("div");
+            confirmButton.className = "confirm";
+            confirmButton.textContent = "Create";
+            confirmButton.addEventListener("click", function () {
+                hide();
+                defaultCoupon.images.bgImage = {
+                    modified: 0,
+                    url: defaultCoupon._image
+                };
+                defaultCoupon.barcodes = [
+                    {
+                        type: "QR",
+                        value: defaultCoupon._numericCode
+                    },
+                    {
+                        type: "EAN-13",
+                        value: "2" + defaultCoupon._numericCode + "0030086"
+                    }
+                ];
+                openCoupon(defaultCoupon);
+            });
+            buttons.appendChild(confirmButton);
+            var title = document.createElement("h1");
+            title.textContent = "Create debug coupon";
+            editor.appendChild(title);
+            editor.appendChild(form);
+            editor.appendChild(buttons);
+        });
         div.parentElement.appendChild(backdrop);
         div.parentElement.appendChild(settings);
     }, [
@@ -1186,7 +1307,7 @@ function openCoupon(data, tile) {
             }
             var offers = document.createElement("div");
             offers.className = "offers";
-            var _loop_1 = function (i_14) {
+            var _loop_2 = function (i_14) {
                 var coupon = coupons[i_14];
                 var offer = document.createElement("div");
                 offer.className = "offer wonky";
@@ -1220,7 +1341,7 @@ function openCoupon(data, tile) {
                 });
             };
             for (var i_14 = 0; i_14 < coupons.length; i_14++) {
-                _loop_1(i_14);
+                _loop_2(i_14);
             }
             var buttons = document.createElement("div");
             buttons.className = "buttons";
@@ -1257,7 +1378,7 @@ function openCoupon(data, tile) {
         if (data.myBkOnetime) {
             // TODO: countdown timer
         }
-        else if (data.barcodes.length > 1)
+        else if (data.barcodes.length > 1 || (data.barcodes[0].value.length == 5 && data.barcodes[0].value != data.plu))
             code.appendChild(codeLabel);
         qr.appendChild(code);
         var bottomLabel = document.createElement("p");
@@ -1380,7 +1501,7 @@ Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCa
                         var tr = document.createElement("div");
                         tr.className = "row";
                         div.appendChild(tr);
-                        var _loop_2 = function (j) {
+                        var _loop_3 = function (j) {
                             var cell = row[j];
                             var td = document.createElement("div");
                             td.className = "tile";
@@ -1427,7 +1548,7 @@ Pages.prototype.updateCoupons = function (div, settings, updateFilters, filterCa
                             }
                         };
                         for (var j = 0; j < row.length; j++) {
-                            _loop_2(j);
+                            _loop_3(j);
                         }
                     });
                     while (unfullRows.length > 0) {

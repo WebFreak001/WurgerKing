@@ -59,6 +59,11 @@ interface Coupon extends TileCommons {
 	_hasParent: boolean;
 }
 
+interface DebugCoupon extends Coupon {
+	_image: string;
+	_numericCode: string;
+}
+
 interface Promo extends ItemCommons {
 	description?: string;
 	footnote?: string;
