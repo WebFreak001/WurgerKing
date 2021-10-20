@@ -177,6 +177,8 @@ Pages.prototype.updatePaperCoupons = function (div: HTMLElement, storeCoupons: S
 		header.textContent = pairs[i].key;
 		div.appendChild(header);
 
+		pairs[i].value.sort((a, b) => parseInt(a.humanCode.substr(1)) - parseInt(b.humanCode.substr(1)));
+
 		for (let j = 0; j < pairs[i].value.length; j++) {
 			if (i == 0)
 				pairs[i].value[j].humanCode = paperCouponLetter + pairs[i].value[j].humanCode.substr(1);

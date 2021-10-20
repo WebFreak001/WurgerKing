@@ -1904,6 +1904,7 @@ Pages.prototype.updatePaperCoupons = function (div, storeCoupons, onlyLikes) {
         var header = document.createElement("h2");
         header.textContent = pairs[i_20].key;
         div.appendChild(header);
+        pairs[i_20].value.sort(function (a, b) { return parseInt(a.humanCode.substr(1)) - parseInt(b.humanCode.substr(1)); });
         for (var j = 0; j < pairs[i_20].value.length; j++) {
             if (i_20 == 0)
                 pairs[i_20].value[j].humanCode = paperCouponLetter + pairs[i_20].value[j].humanCode.substr(1);
